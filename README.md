@@ -1,5 +1,12 @@
 # BLS-SDK Flutter Bridge
 
+# Getting Started
+```
+./gen-bindings.sh && flutter run  
+```
+
+## APIs
+
 ## encrypt
 ![](https://i.imgur.com/tTEFS2b.gif)
 

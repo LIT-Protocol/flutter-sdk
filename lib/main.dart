@@ -111,10 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text("BLS-SDK Manual Tests"),
-            LitButton(
-              buttonText: 'Run HelloWorld',
-              callback: api.helloWorld,
-            ),
+            // LitButton(
+            //   buttonText: 'Run HelloWorld',
+            //   callback: api.helloWorld,
+            // ),
             LitButton(
               buttonText: "encrypt",
               callback: () async {

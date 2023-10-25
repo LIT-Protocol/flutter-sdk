@@ -207,7 +207,7 @@ pub fn rust_release_mode() -> bool {
 }
 
 pub fn hello_world() -> String {
-    String::from("Brown nose attack Hello from Rust! 🦀")
+    String::from("Hello from Rust! 🦀")
 }
 
 pub fn initialize() {
