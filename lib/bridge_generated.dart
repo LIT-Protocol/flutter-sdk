@@ -186,23 +186,6 @@ class NativeImpl implements Native {
         argNames: [],
       );
 
-  Future<void> initialize({dynamic hint}) {
-    return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_initialize(port_),
-      parseSuccessData: _wire2api_unit,
-      parseErrorData: null,
-      constMeta: kInitializeConstMeta,
-      argValues: [],
-      hint: hint,
-    ));
-  }
-
-  FlutterRustBridgeTaskConstMeta get kInitializeConstMeta =>
-      const FlutterRustBridgeTaskConstMeta(
-        debugName: "initialize",
-        argNames: [],
-      );
-
   void dispose() {
     _platform.dispose();
   }
@@ -230,10 +213,6 @@ class NativeImpl implements Native {
 
   Uint8List _wire2api_uint_8_list(dynamic raw) {
     return raw as Uint8List;
-  }
-
-  void _wire2api_unit(dynamic raw) {
-    return;
   }
 }
 
@@ -516,20 +495,6 @@ class NativeWire implements FlutterRustBridgeWireBase {
           'wire_hello_world');
   late final _wire_hello_world =
       _wire_hello_worldPtr.asFunction<void Function(int)>();
-
-  void wire_initialize(
-    int port_,
-  ) {
-    return _wire_initialize(
-      port_,
-    );
-  }
-
-  late final _wire_initializePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'wire_initialize');
-  late final _wire_initialize =
-      _wire_initializePtr.asFunction<void Function(int)>();
 
   ffi.Pointer<wire_StringList> new_StringList_0(
     int len,

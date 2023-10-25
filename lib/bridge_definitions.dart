@@ -51,10 +51,6 @@ abstract class Native {
   Future<String> helloWorld({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kHelloWorldConstMeta;
-
-  Future<void> initialize({dynamic hint});
-
-  FlutterRustBridgeTaskConstMeta get kInitializeConstMeta;
 }
 
 enum Platform {

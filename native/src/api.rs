@@ -93,15 +93,20 @@ pub fn encrypt_time_lock(
         })
 }
 
+// The combine_signature_shares function is designed to take a vector of signature shares
+// and combine them into a single signature. The function first checks if there are enough
+// shares to form a valid signature. Next, it checks the length of the shares to determine
+// which signature scheme (G1 or G2) is being used. Finally, it calls the appropriate helper
+// function to combine the shares and return the combined signature.
 // shares example:[{"ProofOfPossession":"01b2b44a0bf7184f19efacad98e213818edd3f8909dd798129ef169b877d68d77ba630005609f48b80203717d82092a45b06a9de0e61a97b2672b38b31f9ae43e64383d0375a51c75db8972613cc6b099b95c189fd8549ed973ee94b08749f4cac"}, {"ProofOfPossession":"02a8343d5602f523286c4c59356fdcfc51953290495d98cb91a56b59bd1a837ea969cc521382164e85787128ce7f944de303d8e0b5fc4becede0c894bec1adc490fdc133939cca70fb3f504b9bf7b156527b681d9f0619828cd8050c819e46fdb1"}, {"ProofOfPossession":"03b1594ab0cb56f47437b3720dc181661481ca0e36078b79c9a4acc50042f076bf66b68fbd12a1d55021a668555f0eed0a08dfe74455f557b30f1a9c32435a81479ca8843f5b74b176a8d10c5845a84213441eaaaf2ba57e32581584393541c5aa"}]
 pub fn combine_signature_shares(shares: Vec<String>) -> Result<String, String> {
-    // -- check the shares length
+    // Ensure that there are enough shares to create a valid signature.
     if shares.len() < 2 {
         return Err("At least two shares are required".to_string());
     }
 
-    // -- check the shares length, expecting either 122 or 218
-    // NOTE: The length is including the ProofOfPossession field
+    // Determine the signature scheme based on the length of the shares. (expecting either 122 or 218)
+    // The length also includes the "ProofOfPossession" field, hence the constants are used.
     if shares[0].len() == SIGNATURE_G1_SHARE_HEX_LENGTH {
         return combine_signature_shares_inner_g1(shares);
     } else if shares[0].len() == SIGNATURE_G2_SHARE_HEX_LENGTH {
@@ -111,7 +116,11 @@ pub fn combine_signature_shares(shares: Vec<String>) -> Result<String, String> {
     }
 }
 
+// The combine_signature_shares_inner_g1 function is a helper function designed for the G1 signature scheme.
+// It iterates through each share, extracts the "ProofOfPossession" value, and then creates a signature share object.
+// After processing all shares, it combines them into a single signature and encodes the result as a hexadecimal string.
 pub fn combine_signature_shares_inner_g1(shares: Vec<String>) -> Result<String, String> {
+    // Ensure that some shares are provided.
     if shares.len() == 0 {
         return Err("No shares provided".to_string());
     }
@@ -120,6 +129,7 @@ pub fn combine_signature_shares_inner_g1(shares: Vec<String>) -> Result<String, 
         shares.len()
     );
 
+    // Iterate over each share to create the signature share objects.
     for share in shares {
         let parsed_json: serde_json::Value = serde_json
             ::from_str(&share)
@@ -141,6 +151,9 @@ pub fn combine_signature_shares_inner_g1(shares: Vec<String>) -> Result<String, 
     return Ok(hex_encoded);
 }
 
+// The combine_signature_shares_inner_g2 function is similar to its G1 counterpart but is designed for the G2 signature scheme.
+// It follows a similar logic: iterating through each share, extracting the "ProofOfPossession", and creating a signature share object.
+// Finally, it combines the signature shares and encodes the result as a hexadecimal string.
 pub fn combine_signature_shares_inner_g2(shares: Vec<String>) -> Result<String, String> {
     if shares.len() == 0 {
         return Err("No shares provided".to_string());
@@ -208,8 +221,4 @@ pub fn rust_release_mode() -> bool {
 
 pub fn hello_world() -> String {
     String::from("Hello from Rust! 🦀")
-}
-
-pub fn initialize() {
-    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
 }

@@ -51,11 +51,6 @@ pub extern "C" fn wire_hello_world(port_: i64) {
     wire_hello_world_impl(port_)
 }
 
-#[no_mangle]
-pub extern "C" fn wire_initialize(port_: i64) {
-    wire_initialize_impl(port_)
-}
-
 // Section: allocate functions
 
 #[no_mangle]

@@ -140,16 +140,6 @@ fn wire_hello_world_impl(port_: MessagePort) {
         move || move |task_callback| Result::<_, ()>::Ok(hello_world()),
     )
 }
-fn wire_initialize_impl(port_: MessagePort) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
-        WrapInfo {
-            debug_name: "initialize",
-            port: Some(port_),
-            mode: FfiCallMode::Normal,
-        },
-        move || move |task_callback| Result::<_, ()>::Ok(initialize()),
-    )
-}
 // Section: wrapper structs
 
 // Section: static checks
