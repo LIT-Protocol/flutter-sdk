@@ -75,6 +75,66 @@ class NativeImpl implements Native {
         argNames: ["publicKey", "message", "identity"],
       );
 
+  Future<String> combineSignatureShares(
+      {required List<String> shares, dynamic hint}) {
+    var arg0 = _platform.api2wire_StringList(shares);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_combine_signature_shares(port_, arg0),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kCombineSignatureSharesConstMeta,
+      argValues: [shares],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kCombineSignatureSharesConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "combine_signature_shares",
+        argNames: ["shares"],
+      );
+
+  Future<String> combineSignatureSharesInnerG1(
+      {required List<String> shares, dynamic hint}) {
+    var arg0 = _platform.api2wire_StringList(shares);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_combine_signature_shares_inner_g1(port_, arg0),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kCombineSignatureSharesInnerG1ConstMeta,
+      argValues: [shares],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kCombineSignatureSharesInnerG1ConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "combine_signature_shares_inner_g1",
+        argNames: ["shares"],
+      );
+
+  Future<String> combineSignatureSharesInnerG2(
+      {required List<String> shares, dynamic hint}) {
+    var arg0 = _platform.api2wire_StringList(shares);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_combine_signature_shares_inner_g2(port_, arg0),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kCombineSignatureSharesInnerG2ConstMeta,
+      argValues: [shares],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kCombineSignatureSharesInnerG2ConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "combine_signature_shares_inner_g2",
+        argNames: ["shares"],
+      );
+
   Future<Platform> platform({dynamic hint}) {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_platform(port_),
@@ -194,6 +254,15 @@ class NativePlatform extends FlutterRustBridgeBase<NativeWire> {
   @protected
   ffi.Pointer<wire_uint_8_list> api2wire_String(String raw) {
     return api2wire_uint_8_list(utf8.encoder.convert(raw));
+  }
+
+  @protected
+  ffi.Pointer<wire_StringList> api2wire_StringList(List<String> raw) {
+    final ans = inner.new_StringList_0(raw.length);
+    for (var i = 0; i < raw.length; i++) {
+      ans.ref.ptr[i] = api2wire_String(raw[i]);
+    }
+    return ans;
   }
 
   @protected
@@ -353,6 +422,59 @@ class NativeWire implements FlutterRustBridgeWireBase {
       void Function(int, ffi.Pointer<wire_uint_8_list>,
           ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
+  void wire_combine_signature_shares(
+    int port_,
+    ffi.Pointer<wire_StringList> shares,
+  ) {
+    return _wire_combine_signature_shares(
+      port_,
+      shares,
+    );
+  }
+
+  late final _wire_combine_signature_sharesPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64,
+              ffi.Pointer<wire_StringList>)>>('wire_combine_signature_shares');
+  late final _wire_combine_signature_shares = _wire_combine_signature_sharesPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_StringList>)>();
+
+  void wire_combine_signature_shares_inner_g1(
+    int port_,
+    ffi.Pointer<wire_StringList> shares,
+  ) {
+    return _wire_combine_signature_shares_inner_g1(
+      port_,
+      shares,
+    );
+  }
+
+  late final _wire_combine_signature_shares_inner_g1Ptr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_StringList>)>>(
+      'wire_combine_signature_shares_inner_g1');
+  late final _wire_combine_signature_shares_inner_g1 =
+      _wire_combine_signature_shares_inner_g1Ptr
+          .asFunction<void Function(int, ffi.Pointer<wire_StringList>)>();
+
+  void wire_combine_signature_shares_inner_g2(
+    int port_,
+    ffi.Pointer<wire_StringList> shares,
+  ) {
+    return _wire_combine_signature_shares_inner_g2(
+      port_,
+      shares,
+    );
+  }
+
+  late final _wire_combine_signature_shares_inner_g2Ptr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_StringList>)>>(
+      'wire_combine_signature_shares_inner_g2');
+  late final _wire_combine_signature_shares_inner_g2 =
+      _wire_combine_signature_shares_inner_g2Ptr
+          .asFunction<void Function(int, ffi.Pointer<wire_StringList>)>();
+
   void wire_platform(
     int port_,
   ) {
@@ -409,6 +531,20 @@ class NativeWire implements FlutterRustBridgeWireBase {
   late final _wire_initialize =
       _wire_initializePtr.asFunction<void Function(int)>();
 
+  ffi.Pointer<wire_StringList> new_StringList_0(
+    int len,
+  ) {
+    return _new_StringList_0(
+      len,
+    );
+  }
+
+  late final _new_StringList_0Ptr = _lookup<
+          ffi.NativeFunction<ffi.Pointer<wire_StringList> Function(ffi.Int32)>>(
+      'new_StringList_0');
+  late final _new_StringList_0 = _new_StringList_0Ptr
+      .asFunction<ffi.Pointer<wire_StringList> Function(int)>();
+
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,
   ) {
@@ -443,6 +579,13 @@ final class _Dart_Handle extends ffi.Opaque {}
 
 final class wire_uint_8_list extends ffi.Struct {
   external ffi.Pointer<ffi.Uint8> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_StringList extends ffi.Struct {
+  external ffi.Pointer<ffi.Pointer<wire_uint_8_list>> ptr;
 
   @ffi.Int32()
   external int len;

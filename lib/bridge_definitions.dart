@@ -25,6 +25,21 @@ abstract class Native {
 
   FlutterRustBridgeTaskConstMeta get kEncryptTimeLockConstMeta;
 
+  Future<String> combineSignatureShares(
+      {required List<String> shares, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kCombineSignatureSharesConstMeta;
+
+  Future<String> combineSignatureSharesInnerG1(
+      {required List<String> shares, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kCombineSignatureSharesInnerG1ConstMeta;
+
+  Future<String> combineSignatureSharesInnerG2(
+      {required List<String> shares, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kCombineSignatureSharesInnerG2ConstMeta;
+
   Future<Platform> platform({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kPlatformConstMeta;

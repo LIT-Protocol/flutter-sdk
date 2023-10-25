@@ -110,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // const Text("You're running on"),
+            const Text("BLS-SDK Manual Tests"),
             LitButton(
               buttonText: 'Run HelloWorld',
               callback: api.helloWorld,
@@ -139,7 +139,35 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                 return data;
               },
-            )
+            ),
+            LitButton(
+              buttonText: "combineSignatureShares",
+              callback: () async {
+
+                final signatureShares = [
+                  '01b2b44a0bf7184f19efacad98e213818edd3f8909dd798129ef169b877d68d77ba630005609f48b80203717d82092a45b06a9de0e61a97b2672b38b31f9ae43e64383d0375a51c75db8972613cc6b099b95c189fd8549ed973ee94b08749f4cac',
+                  '02a8343d5602f523286c4c59356fdcfc51953290495d98cb91a56b59bd1a837ea969cc521382164e85787128ce7f944de303d8e0b5fc4becede0c894bec1adc490fdc133939cca70fb3f504b9bf7b156527b681d9f0619828cd8050c819e46fdb1',
+                  '03b1594ab0cb56f47437b3720dc181661481ca0e36078b79c9a4acc50042f076bf66b68fbd12a1d55021a668555f0eed0a08dfe74455f557b30f1a9c32435a81479ca8843f5b74b176a8d10c5845a84213441eaaaf2ba57e32581584393541c5aa',
+                ].map((s) => '{"ProofOfPossession":"$s"}').toList();
+
+
+                print("\n---------- 🦋 Flutter Frontend ----------\n");
+                print("signatureShares: $signatureShares");
+
+                print("\n---------- 🦀 RUST Backend ----------\n");
+                var data = await api.combineSignatureShares(shares: signatureShares);
+                print("Rust returned data: $data");
+
+                const expectedResult = '911bf01a53576c53cf7667e32ef76799711f881a72d8894aa6a7186b5189e0345065a29e5dda5a19571b63ada860b03d07125369bfd902280599052475959f34a937f1075ef1acfb8baff9b8a22fc8b0d0655ad7b6e2860117029ebc98e47898';
+
+                if(expectedResult == data){
+                  print("✅ SUCCESS, data matches expected result");
+                } else {
+                  print("❌ FAILED, expected: $expectedResult, got: $data");
+                }
+                return data;
+              }
+            ),
           ],
         ),
       ),

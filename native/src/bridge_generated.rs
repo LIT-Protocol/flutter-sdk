@@ -62,6 +62,54 @@ fn wire_encrypt_time_lock_impl(
         },
     )
 }
+fn wire_combine_signature_shares_impl(
+    port_: MessagePort,
+    shares: impl Wire2Api<Vec<String>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
+        WrapInfo {
+            debug_name: "combine_signature_shares",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_shares = shares.wire2api();
+            move |task_callback| combine_signature_shares(api_shares)
+        },
+    )
+}
+fn wire_combine_signature_shares_inner_g1_impl(
+    port_: MessagePort,
+    shares: impl Wire2Api<Vec<String>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
+        WrapInfo {
+            debug_name: "combine_signature_shares_inner_g1",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_shares = shares.wire2api();
+            move |task_callback| combine_signature_shares_inner_g1(api_shares)
+        },
+    )
+}
+fn wire_combine_signature_shares_inner_g2_impl(
+    port_: MessagePort,
+    shares: impl Wire2Api<Vec<String>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
+        WrapInfo {
+            debug_name: "combine_signature_shares_inner_g2",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_shares = shares.wire2api();
+            move |task_callback| combine_signature_shares_inner_g2(api_shares)
+        },
+    )
+}
 fn wire_platform_impl(port_: MessagePort) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Platform, _>(
         WrapInfo {

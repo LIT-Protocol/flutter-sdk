@@ -18,6 +18,8 @@ use serde::{ de::DeserializeOwned, Serialize };
 use serde_json;
 use base64;
 use hex;
+use std::collections::HashMap;
+use blsful::Pairing;
 
 const SIGNATURE_G2_PUBLIC_KEY_HEX_LENGTH: usize = 96;
 const SIGNATURE_G1_PUBLIC_KEY_HEX_LENGTH: usize = 192;
@@ -31,6 +33,7 @@ const SIGNATURE_G2_SHARE_HEX_LENGTH: usize = 218;
 // All three parameters are hex-encoded strings, where each byte is represented by two hex characters.
 pub fn encrypt(public_key: String, message: String, identity: String) -> Result<String, String> {
     // Decode the hex-encoded public_key string to its byte representation.
+    // For example, the hex string "48656c6c6f" would be decoded to the byte array [72, 101, 108, 108, 111].
     // After decoding, the byte array's length will be half the length of the original hex string.
     // This is because each byte is represented by two hex characters in the string.
     let public_key_bytes = hex::decode(&public_key).map_err(|e| e.to_string())?;
@@ -59,21 +62,29 @@ pub fn encrypt(public_key: String, message: String, identity: String) -> Result<
     }
 }
 
+// The encrypt_time_lock function takes three parameters:
+// - public_key: Expected data type: String (e.g., "0x1234abcd...")
+// - message: Expected data type: Vec<u8> (e.g., vec![72, 101, 108, 108, 111])
+// - identity: Expected data type: Vec<u8> (e.g., vec![9, 10, 11, 12])
+// All three parameters are used to encrypt a message with a time lock using the provided public key and identity.
 pub fn encrypt_time_lock(
     public_key: String,
     message: Vec<u8>,
-    identity: Vec<u8>,
+    identity: Vec<u8>
 ) -> Result<String, String> {
+    // Convert the public key from a hex string to a PublicKey object.
+    // For example, the hex string "0x1234abcd" would be converted to a PublicKey object.
+    // After conversion, the PublicKey object can be used for cryptographic operations.
+    // This is because the PublicKey object represents the public key in a format that the cryptographic library can understand.
+    let json_hex_string_public_key = format!("\"{}\"", public_key);
 
-    // print the public key
-    println!("public_key: {}", public_key);
-
-    let jsonHexStringPublicKey = format!("\"{}\"", public_key);
-
-
-    let key = serde_json::from_str::<PublicKey<Bls12381G2Impl>>(&jsonHexStringPublicKey)
+    let key = serde_json
+        ::from_str::<PublicKey<Bls12381G2Impl>>(&json_hex_string_public_key)
         .map_err(|_e| "Failed to parse public key as a json hex string".to_string())?;
 
+    // Encrypt the message with a time lock using the provided public key and identity.
+    // If the encryption is successful, the encrypted data is returned as a base64-encoded string.
+    // If the encryption fails, an error message is returned.
     key.encrypt_time_lock(SignatureSchemes::ProofOfPossession, message, identity)
         .map_err(|_e| "Unable to encrypt data".to_string())
         .map(|ciphertext| {
@@ -82,6 +93,83 @@ pub fn encrypt_time_lock(
         })
 }
 
+// shares example:[{"ProofOfPossession":"01b2b44a0bf7184f19efacad98e213818edd3f8909dd798129ef169b877d68d77ba630005609f48b80203717d82092a45b06a9de0e61a97b2672b38b31f9ae43e64383d0375a51c75db8972613cc6b099b95c189fd8549ed973ee94b08749f4cac"}, {"ProofOfPossession":"02a8343d5602f523286c4c59356fdcfc51953290495d98cb91a56b59bd1a837ea969cc521382164e85787128ce7f944de303d8e0b5fc4becede0c894bec1adc490fdc133939cca70fb3f504b9bf7b156527b681d9f0619828cd8050c819e46fdb1"}, {"ProofOfPossession":"03b1594ab0cb56f47437b3720dc181661481ca0e36078b79c9a4acc50042f076bf66b68fbd12a1d55021a668555f0eed0a08dfe74455f557b30f1a9c32435a81479ca8843f5b74b176a8d10c5845a84213441eaaaf2ba57e32581584393541c5aa"}]
+pub fn combine_signature_shares(shares: Vec<String>) -> Result<String, String> {
+    // -- check the shares length
+    if shares.len() < 2 {
+        return Err("At least two shares are required".to_string());
+    }
+
+    // -- check the shares length, expecting either 122 or 218
+    // NOTE: The length is including the ProofOfPossession field
+    if shares[0].len() == SIGNATURE_G1_SHARE_HEX_LENGTH {
+        return combine_signature_shares_inner_g1(shares);
+    } else if shares[0].len() == SIGNATURE_G2_SHARE_HEX_LENGTH {
+        return combine_signature_shares_inner_g2(shares);
+    } else {
+        return Err(format!("Invalid shares. Received {}.", shares[0].len()));
+    }
+}
+
+pub fn combine_signature_shares_inner_g1(shares: Vec<String>) -> Result<String, String> {
+    if shares.len() == 0 {
+        return Err("No shares provided".to_string());
+    }
+
+    let mut signature_shares: Vec<SignatureShare<Bls12381G1Impl>> = Vec::with_capacity(
+        shares.len()
+    );
+
+    for share in shares {
+        let parsed_json: serde_json::Value = serde_json
+            ::from_str(&share)
+            .map_err(|_e| format!("🚨 Failed to parse shares, received {}", share))?;
+
+        let inner_share: <Bls12381G1Impl as Pairing>::SignatureShare = serde_json
+            ::from_str(parsed_json["ProofOfPossession"].to_string().as_str())
+            .map_err(|_e| format!("🚨 Failed to deserialize possession string: {}", _e))?;
+        signature_shares.push(SignatureShare::ProofOfPossession(inner_share));
+    }
+
+    let signatures = Signature::from_shares(&signature_shares[..]).map_err(|_e|
+        format!("🚨 Failed to combine signature shares: {}", _e)
+    )?;
+
+    let raw_value_bytes = signatures.as_raw_value().to_bytes();
+    let hex_encoded = hex::encode(raw_value_bytes);
+
+    return Ok(hex_encoded);
+}
+
+pub fn combine_signature_shares_inner_g2(shares: Vec<String>) -> Result<String, String> {
+    if shares.len() == 0 {
+        return Err("No shares provided".to_string());
+    }
+
+    let mut signature_shares: Vec<SignatureShare<Bls12381G2Impl>> = Vec::with_capacity(
+        shares.len()
+    );
+
+    for share in shares {
+        let parsed_json: serde_json::Value = serde_json
+            ::from_str(&share)
+            .map_err(|_e| format!("🚨 Failed to parse shares, received {}", share))?;
+
+        let inner_share: <Bls12381G2Impl as Pairing>::SignatureShare = serde_json
+            ::from_str(parsed_json["ProofOfPossession"].to_string().as_str())
+            .map_err(|_e| format!("🚨 Failed to deserialize possession string: {}", _e))?;
+        signature_shares.push(SignatureShare::ProofOfPossession(inner_share));
+    }
+
+    let signatures = Signature::from_shares(&signature_shares[..]).map_err(|_e|
+        format!("🚨 Failed to combine signature shares: {}", _e)
+    )?;
+
+    let raw_value_bytes = signatures.as_raw_value().to_bytes();
+    let hex_encoded = hex::encode(raw_value_bytes);
+
+    return Ok(hex_encoded);
+}
 
 pub enum Platform {
     Unknown,

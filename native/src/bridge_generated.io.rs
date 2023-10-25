@@ -22,6 +22,21 @@ pub extern "C" fn wire_encrypt_time_lock(
 }
 
 #[no_mangle]
+pub extern "C" fn wire_combine_signature_shares(port_: i64, shares: *mut wire_StringList) {
+    wire_combine_signature_shares_impl(port_, shares)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_combine_signature_shares_inner_g1(port_: i64, shares: *mut wire_StringList) {
+    wire_combine_signature_shares_inner_g1_impl(port_, shares)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_combine_signature_shares_inner_g2(port_: i64, shares: *mut wire_StringList) {
+    wire_combine_signature_shares_inner_g2_impl(port_, shares)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_platform(port_: i64) {
     wire_platform_impl(port_)
 }
@@ -44,6 +59,15 @@ pub extern "C" fn wire_initialize(port_: i64) {
 // Section: allocate functions
 
 #[no_mangle]
+pub extern "C" fn new_StringList_0(len: i32) -> *mut wire_StringList {
+    let wrap = wire_StringList {
+        ptr: support::new_leak_vec_ptr(<*mut wire_uint_8_list>::new_with_null_ptr(), len),
+        len,
+    };
+    support::new_leak_box_ptr(wrap)
+}
+
+#[no_mangle]
 pub extern "C" fn new_uint_8_list_0(len: i32) -> *mut wire_uint_8_list {
     let ans = wire_uint_8_list {
         ptr: support::new_leak_vec_ptr(Default::default(), len),
@@ -62,6 +86,15 @@ impl Wire2Api<String> for *mut wire_uint_8_list {
         String::from_utf8_lossy(&vec).into_owned()
     }
 }
+impl Wire2Api<Vec<String>> for *mut wire_StringList {
+    fn wire2api(self) -> Vec<String> {
+        let vec = unsafe {
+            let wrap = support::box_from_leak_ptr(self);
+            support::vec_from_leak_ptr(wrap.ptr, wrap.len)
+        };
+        vec.into_iter().map(Wire2Api::wire2api).collect()
+    }
+}
 
 impl Wire2Api<Vec<u8>> for *mut wire_uint_8_list {
     fn wire2api(self) -> Vec<u8> {
@@ -72,6 +105,13 @@ impl Wire2Api<Vec<u8>> for *mut wire_uint_8_list {
     }
 }
 // Section: wire structs
+
+#[repr(C)]
+#[derive(Clone)]
+pub struct wire_StringList {
+    ptr: *mut *mut wire_uint_8_list,
+    len: i32,
+}
 
 #[repr(C)]
 #[derive(Clone)]
