@@ -112,6 +112,33 @@ pub extern "C" fn wire_verify_signature_inner_g1(
 }
 
 #[no_mangle]
+pub extern "C" fn wire_decrypt_with_signature_shares(
+    port_: i64,
+    ciphertext: *mut wire_uint_8_list,
+    shares: *mut wire_StringList,
+) {
+    wire_decrypt_with_signature_shares_impl(port_, ciphertext, shares)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_decrypt_time_lock_g2(
+    port_: i64,
+    ciphertext: *mut wire_uint_8_list,
+    shares: *mut wire_StringList,
+) {
+    wire_decrypt_time_lock_g2_impl(port_, ciphertext, shares)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_decrypt_time_lock_g1(
+    port_: i64,
+    ciphertext: *mut wire_uint_8_list,
+    shares: *mut wire_StringList,
+) {
+    wire_decrypt_time_lock_g1_impl(port_, ciphertext, shares)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_platform(port_: i64) {
     wire_platform_impl(port_)
 }

@@ -318,6 +318,75 @@ class NativeImpl implements Native {
         argNames: ["publicKey", "message", "signature"],
       );
 
+  Future<String> decryptWithSignatureShares(
+      {required String ciphertext,
+      required List<String> shares,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(ciphertext);
+    var arg1 = _platform.api2wire_StringList(shares);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_decrypt_with_signature_shares(port_, arg0, arg1),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kDecryptWithSignatureSharesConstMeta,
+      argValues: [ciphertext, shares],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kDecryptWithSignatureSharesConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "decrypt_with_signature_shares",
+        argNames: ["ciphertext", "shares"],
+      );
+
+  Future<String> decryptTimeLockG2(
+      {required Uint8List ciphertext,
+      required List<String> shares,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_uint_8_list(ciphertext);
+    var arg1 = _platform.api2wire_StringList(shares);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_decrypt_time_lock_g2(port_, arg0, arg1),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kDecryptTimeLockG2ConstMeta,
+      argValues: [ciphertext, shares],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kDecryptTimeLockG2ConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "decrypt_time_lock_g2",
+        argNames: ["ciphertext", "shares"],
+      );
+
+  Future<String> decryptTimeLockG1(
+      {required Uint8List ciphertext,
+      required List<String> shares,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_uint_8_list(ciphertext);
+    var arg1 = _platform.api2wire_StringList(shares);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_decrypt_time_lock_g1(port_, arg0, arg1),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kDecryptTimeLockG1ConstMeta,
+      argValues: [ciphertext, shares],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kDecryptTimeLockG1ConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "decrypt_time_lock_g1",
+        argNames: ["ciphertext", "shares"],
+      );
+
   Future<Platform> platform({dynamic hint}) {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_platform(port_),
@@ -846,6 +915,70 @@ class NativeWire implements FlutterRustBridgeWireBase {
       _wire_verify_signature_inner_g1Ptr.asFunction<
           void Function(int, ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_decrypt_with_signature_shares(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> ciphertext,
+    ffi.Pointer<wire_StringList> shares,
+  ) {
+    return _wire_decrypt_with_signature_shares(
+      port_,
+      ciphertext,
+      shares,
+    );
+  }
+
+  late final _wire_decrypt_with_signature_sharesPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+                  ffi.Pointer<wire_StringList>)>>(
+      'wire_decrypt_with_signature_shares');
+  late final _wire_decrypt_with_signature_shares =
+      _wire_decrypt_with_signature_sharesPtr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>();
+
+  void wire_decrypt_time_lock_g2(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> ciphertext,
+    ffi.Pointer<wire_StringList> shares,
+  ) {
+    return _wire_decrypt_time_lock_g2(
+      port_,
+      ciphertext,
+      shares,
+    );
+  }
+
+  late final _wire_decrypt_time_lock_g2Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>>('wire_decrypt_time_lock_g2');
+  late final _wire_decrypt_time_lock_g2 =
+      _wire_decrypt_time_lock_g2Ptr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>();
+
+  void wire_decrypt_time_lock_g1(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> ciphertext,
+    ffi.Pointer<wire_StringList> shares,
+  ) {
+    return _wire_decrypt_time_lock_g1(
+      port_,
+      ciphertext,
+      shares,
+    );
+  }
+
+  late final _wire_decrypt_time_lock_g1Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>>('wire_decrypt_time_lock_g1');
+  late final _wire_decrypt_time_lock_g1 =
+      _wire_decrypt_time_lock_g1Ptr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>();
 
   void wire_platform(
     int port_,

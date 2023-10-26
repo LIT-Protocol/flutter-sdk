@@ -239,6 +239,41 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
               }
             ),
+            LitButton(
+              buttonText: "decryptWithSignatureShares",
+              callback: () async {
+
+                // -- original data
+                final secretMessage = Uint8List.fromList([
+                  240, 23, 185, 6, 87, 33, 173, 216, 53, 84, 80, 135, 190, 16, 58, 85, 97, 75,
+                  3, 192, 215, 82, 217, 5, 40, 65, 2, 214, 40, 177, 53, 150,
+                ]);
+
+                // -- This is copied from the output of the encrypt function
+                const ciphertext = 'jxRc7vOr+ubf/Z1fAOr0VXT2veeqE+r90eLPpnrxnV5VcrjnhHxKXfM92nAAGBQ/5KU5BH5NpBjfozjAECBzd2ncD9qe48lnVo8pBoE5evwhfDtxv/CI4U0UR8eXlsvywxjiUbNVja9vzwvD+r7IGli7Aw==';
+
+                final signatureShares = [
+                  '01b2b44a0bf7184f19efacad98e213818edd3f8909dd798129ef169b877d68d77ba630005609f48b80203717d82092a45b06a9de0e61a97b2672b38b31f9ae43e64383d0375a51c75db8972613cc6b099b95c189fd8549ed973ee94b08749f4cac',
+                  '02a8343d5602f523286c4c59356fdcfc51953290495d98cb91a56b59bd1a837ea969cc521382164e85787128ce7f944de303d8e0b5fc4becede0c894bec1adc490fdc133939cca70fb3f504b9bf7b156527b681d9f0619828cd8050c819e46fdb1',
+                  '03b1594ab0cb56f47437b3720dc181661481ca0e36078b79c9a4acc50042f076bf66b68fbd12a1d55021a668555f0eed0a08dfe74455f557b30f1a9c32435a81479ca8843f5b74b176a8d10c5845a84213441eaaaf2ba57e32581584393541c5aa',
+                ].map((s) => '{"ProofOfPossession":"$s"}').toList();
+
+                print("\n---------- 🦀 RUST Backend ----------\n");
+                var data = await api.decryptWithSignatureShares(ciphertext: ciphertext, shares: signatureShares);
+
+                // -- assert
+                var expectedBase64Encoded = base64Encode(secretMessage);;
+                print("Expected (base64): $expectedBase64Encoded");
+
+                if(expectedBase64Encoded == data){
+                  print("✅ SUCCESS, data matches expected result");
+                  return "✅ SUCCESS, data matches expected result";
+                } else {
+                  print("❌ FAILED, expected: $expectedBase64Encoded, got: $data");
+                }
+
+              },
+            ),
           ],
         ),
       ),

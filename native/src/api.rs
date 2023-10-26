@@ -433,6 +433,99 @@ pub fn verify_signature_inner_g1(
     Ok(())
 }
 
+pub fn decrypt_with_signature_shares(
+    ciphertext: String,
+    shares: Vec<String>
+) -> Result<String, String> {
+    if shares.len() < 2 {
+        return Err("🚨 At least two shares are required".to_string());
+    }
+
+    let ciphertext_bytes = base64::decode(&ciphertext).map_err(|e| e.to_string())?;
+
+    if shares[0].len() == SIGNATURE_G1_SHARE_HEX_LENGTH {
+        return decrypt_time_lock_g1(ciphertext_bytes, shares);
+    } else if shares[0].len() == SIGNATURE_G2_SHARE_HEX_LENGTH {
+        return decrypt_time_lock_g2(ciphertext_bytes, shares);
+    } else {
+        return Err(format!("🚨 Invalid shares. Received {}.", shares[0].len()));
+    }
+}
+
+pub fn decrypt_time_lock_g2(ciphertext: Vec<u8>, shares: Vec<String>) -> Result<String, String> {
+    // NOTE: The following basically works exactly like combine_signature_shares_inner_g2. fix this to reverse the hex_encoded result from combine_signature_shares_inner_g2 back to SignatureShare<Bls12381G2Impl>
+    // -- start combining shares
+    if shares.len() == 0 {
+        return Err("🚨 No shares provided".to_string());
+    }
+
+    let mut signature_shares: Vec<SignatureShare<Bls12381G2Impl>> = Vec::with_capacity(
+        shares.len()
+    );
+
+    for share in shares {
+        let parsed_json: serde_json::Value = serde_json
+            ::from_str(&share)
+            .map_err(|_e| format!("🚨 Failed to parse shares, received {}", share))?;
+
+        let inner_share: <Bls12381G2Impl as Pairing>::SignatureShare = serde_json
+            ::from_str(parsed_json["ProofOfPossession"].to_string().as_str())
+            .map_err(|_e| format!("🚨 Failed to deserialize possession string: {}", _e))?;
+        signature_shares.push(SignatureShare::ProofOfPossession(inner_share));
+    }
+
+    let decryption_key = Signature::from_shares(&signature_shares[..]).map_err(|_e|
+        format!("🚨 Failed to combine signature shares: {}", _e)
+    )?;
+    // -- end combining shares
+
+    let ciphertext = serde_bare
+        ::from_slice::<TimeCryptCiphertext<Bls12381G2Impl>>(&ciphertext)
+        .map_err(|_e| format!("🚨 Failed to hex decode ciphertext: {}", _e))?;
+
+    Option::<Vec<u8>>
+        ::from(ciphertext.decrypt(&decryption_key))
+        .map(|c| base64_encode_bytes(&c))
+        .ok_or_else(|| "🚨 Failed to decrypt".to_string())
+}
+
+pub fn decrypt_time_lock_g1(ciphertext: Vec<u8>, shares: Vec<String>) -> Result<String, String> {
+    // NOTE: The following basically works exactly like combine_signature_shares_inner_g2. fix this to reverse the hex_encoded result from combine_signature_shares_inner_g2 back to SignatureShare<Bls12381G2Impl>
+    // -- start combining shares
+    if shares.len() == 0 {
+        return Err("🚨 No shares provided".to_string());
+    }
+
+    let mut signature_shares: Vec<SignatureShare<Bls12381G1Impl>> = Vec::with_capacity(
+        shares.len()
+    );
+
+    for share in shares {
+        let parsed_json: serde_json::Value = serde_json
+            ::from_str(&share)
+            .map_err(|_e| format!("🚨 Failed to parse shares, received {}", share))?;
+
+        let inner_share: <Bls12381G1Impl as Pairing>::SignatureShare = serde_json
+            ::from_str(parsed_json["ProofOfPossession"].to_string().as_str())
+            .map_err(|_e| format!("🚨 Failed to deserialize possession string: {}", _e))?;
+        signature_shares.push(SignatureShare::ProofOfPossession(inner_share));
+    }
+
+    let decryption_key = Signature::from_shares(&signature_shares[..]).map_err(|_e|
+        format!("🚨 Failed to combine signature shares: {}", _e)
+    )?;
+    // -- end combining shares
+
+    let ciphertext = serde_bare
+        ::from_slice::<TimeCryptCiphertext<Bls12381G1Impl>>(&ciphertext)
+        .map_err(|_e| format!("🚨 Failed to hex decode ciphertext: {}", _e))?;
+
+    Option::<Vec<u8>>
+        ::from(ciphertext.decrypt(&decryption_key))
+        .map(|c| base64_encode_bytes(&c))
+        .ok_or_else(|| "🚨 Failed to decrypt".to_string())
+}
+
 pub enum Platform {
     Unknown,
     Android,

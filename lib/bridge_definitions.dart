@@ -100,6 +100,25 @@ abstract class Native {
 
   FlutterRustBridgeTaskConstMeta get kVerifySignatureInnerG1ConstMeta;
 
+  Future<String> decryptWithSignatureShares(
+      {required String ciphertext, required List<String> shares, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kDecryptWithSignatureSharesConstMeta;
+
+  Future<String> decryptTimeLockG2(
+      {required Uint8List ciphertext,
+      required List<String> shares,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kDecryptTimeLockG2ConstMeta;
+
+  Future<String> decryptTimeLockG1(
+      {required Uint8List ciphertext,
+      required List<String> shares,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kDecryptTimeLockG1ConstMeta;
+
   Future<Platform> platform({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kPlatformConstMeta;
