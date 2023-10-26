@@ -345,16 +345,6 @@ fn wire_rust_release_mode_impl(port_: MessagePort) {
         move || move |task_callback| Result::<_, ()>::Ok(rust_release_mode()),
     )
 }
-fn wire_hello_world_impl(port_: MessagePort) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
-        WrapInfo {
-            debug_name: "hello_world",
-            port: Some(port_),
-            mode: FfiCallMode::Normal,
-        },
-        move || move |task_callback| Result::<_, ()>::Ok(hello_world()),
-    )
-}
 // Section: wrapper structs
 
 // Section: static checks

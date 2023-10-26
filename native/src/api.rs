@@ -1,5 +1,4 @@
 extern crate quote;
-
 use quote::quote;
 use serde::Deserialize;
 use base64_light::{ base64_decode, base64_encode_bytes };
@@ -559,8 +558,4 @@ pub fn platform() -> Platform {
 
 pub fn rust_release_mode() -> bool {
     cfg!(not(debug_assertions))
-}
-
-pub fn hello_world() -> String {
-    String::from("Hello from Rust! 🦀")
 }

@@ -421,23 +421,6 @@ class NativeImpl implements Native {
         argNames: [],
       );
 
-  Future<String> helloWorld({dynamic hint}) {
-    return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_hello_world(port_),
-      parseSuccessData: _wire2api_String,
-      parseErrorData: null,
-      constMeta: kHelloWorldConstMeta,
-      argValues: [],
-      hint: hint,
-    ));
-  }
-
-  FlutterRustBridgeTaskConstMeta get kHelloWorldConstMeta =>
-      const FlutterRustBridgeTaskConstMeta(
-        debugName: "hello_world",
-        argNames: [],
-      );
-
   void dispose() {
     _platform.dispose();
   }
@@ -1007,20 +990,6 @@ class NativeWire implements FlutterRustBridgeWireBase {
           'wire_rust_release_mode');
   late final _wire_rust_release_mode =
       _wire_rust_release_modePtr.asFunction<void Function(int)>();
-
-  void wire_hello_world(
-    int port_,
-  ) {
-    return _wire_hello_world(
-      port_,
-    );
-  }
-
-  late final _wire_hello_worldPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'wire_hello_world');
-  late final _wire_hello_world =
-      _wire_hello_worldPtr.asFunction<void Function(int)>();
 
   ffi.Pointer<wire_StringList> new_StringList_0(
     int len,
