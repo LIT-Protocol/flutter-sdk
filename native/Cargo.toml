@@ -1,4 +1,5 @@
 [package]
+authors = ["Mike <mike@litprotocol.com>"]
 name = "native"
 version = "0.1.0"
 edition = "2021"

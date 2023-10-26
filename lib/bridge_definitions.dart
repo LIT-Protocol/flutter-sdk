@@ -17,13 +17,21 @@ abstract class Native {
 
   FlutterRustBridgeTaskConstMeta get kEncryptConstMeta;
 
-  Future<String> encryptTimeLock(
+  Future<String> encryptTimeLockG2(
       {required String publicKey,
       required Uint8List message,
       required Uint8List identity,
       dynamic hint});
 
-  FlutterRustBridgeTaskConstMeta get kEncryptTimeLockConstMeta;
+  FlutterRustBridgeTaskConstMeta get kEncryptTimeLockG2ConstMeta;
+
+  Future<String> encryptTimeLockG1(
+      {required String publicKey,
+      required Uint8List message,
+      required Uint8List identity,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kEncryptTimeLockG1ConstMeta;
 
   Future<String> combineSignatureShares(
       {required List<String> shares, dynamic hint});
@@ -39,6 +47,34 @@ abstract class Native {
       {required List<String> shares, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kCombineSignatureSharesInnerG2ConstMeta;
+
+  Future<String> verifyAndDecryptWithSignatureShares(
+      {required String publicKey,
+      required String identity,
+      required String ciphertext,
+      required List<String> shares,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta
+      get kVerifyAndDecryptWithSignatureSharesConstMeta;
+
+  Future<String> verifyAndDecryptG2(
+      {required String publicKey,
+      required Uint8List identity,
+      required Uint8List ciphertext,
+      required List<String> shares,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kVerifyAndDecryptG2ConstMeta;
+
+  Future<String> verifyAndDecryptG1(
+      {required String publicKey,
+      required Uint8List identity,
+      required Uint8List ciphertext,
+      required List<String> shares,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kVerifyAndDecryptG1ConstMeta;
 
   Future<Platform> platform({dynamic hint});
 

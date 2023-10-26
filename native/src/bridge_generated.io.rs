@@ -12,13 +12,23 @@ pub extern "C" fn wire_encrypt(
 }
 
 #[no_mangle]
-pub extern "C" fn wire_encrypt_time_lock(
+pub extern "C" fn wire_encrypt_time_lock_g2(
     port_: i64,
     public_key: *mut wire_uint_8_list,
     message: *mut wire_uint_8_list,
     identity: *mut wire_uint_8_list,
 ) {
-    wire_encrypt_time_lock_impl(port_, public_key, message, identity)
+    wire_encrypt_time_lock_g2_impl(port_, public_key, message, identity)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_encrypt_time_lock_g1(
+    port_: i64,
+    public_key: *mut wire_uint_8_list,
+    message: *mut wire_uint_8_list,
+    identity: *mut wire_uint_8_list,
+) {
+    wire_encrypt_time_lock_g1_impl(port_, public_key, message, identity)
 }
 
 #[no_mangle]
@@ -34,6 +44,41 @@ pub extern "C" fn wire_combine_signature_shares_inner_g1(port_: i64, shares: *mu
 #[no_mangle]
 pub extern "C" fn wire_combine_signature_shares_inner_g2(port_: i64, shares: *mut wire_StringList) {
     wire_combine_signature_shares_inner_g2_impl(port_, shares)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_verify_and_decrypt_with_signature_shares(
+    port_: i64,
+    public_key: *mut wire_uint_8_list,
+    identity: *mut wire_uint_8_list,
+    ciphertext: *mut wire_uint_8_list,
+    shares: *mut wire_StringList,
+) {
+    wire_verify_and_decrypt_with_signature_shares_impl(
+        port_, public_key, identity, ciphertext, shares,
+    )
+}
+
+#[no_mangle]
+pub extern "C" fn wire_verify_and_decrypt_g2(
+    port_: i64,
+    public_key: *mut wire_uint_8_list,
+    identity: *mut wire_uint_8_list,
+    ciphertext: *mut wire_uint_8_list,
+    shares: *mut wire_StringList,
+) {
+    wire_verify_and_decrypt_g2_impl(port_, public_key, identity, ciphertext, shares)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_verify_and_decrypt_g1(
+    port_: i64,
+    public_key: *mut wire_uint_8_list,
+    identity: *mut wire_uint_8_list,
+    ciphertext: *mut wire_uint_8_list,
+    shares: *mut wire_StringList,
+) {
+    wire_verify_and_decrypt_g1_impl(port_, public_key, identity, ciphertext, shares)
 }
 
 #[no_mangle]

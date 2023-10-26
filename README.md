@@ -1,5 +1,14 @@
 # BLS-SDK Flutter Bridge
 
+
+# Prerequisite
+
+Open iPhone simulator
+
+```
+open -a simulator 
+```
+
 # Getting Started
 ```
 ./gen-bindings.sh && flutter run  

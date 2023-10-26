@@ -50,7 +50,7 @@ class NativeImpl implements Native {
         argNames: ["publicKey", "message", "identity"],
       );
 
-  Future<String> encryptTimeLock(
+  Future<String> encryptTimeLockG2(
       {required String publicKey,
       required Uint8List message,
       required Uint8List identity,
@@ -60,18 +60,43 @@ class NativeImpl implements Native {
     var arg2 = _platform.api2wire_uint_8_list(identity);
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) =>
-          _platform.inner.wire_encrypt_time_lock(port_, arg0, arg1, arg2),
+          _platform.inner.wire_encrypt_time_lock_g2(port_, arg0, arg1, arg2),
       parseSuccessData: _wire2api_String,
       parseErrorData: _wire2api_String,
-      constMeta: kEncryptTimeLockConstMeta,
+      constMeta: kEncryptTimeLockG2ConstMeta,
       argValues: [publicKey, message, identity],
       hint: hint,
     ));
   }
 
-  FlutterRustBridgeTaskConstMeta get kEncryptTimeLockConstMeta =>
+  FlutterRustBridgeTaskConstMeta get kEncryptTimeLockG2ConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
-        debugName: "encrypt_time_lock",
+        debugName: "encrypt_time_lock_g2",
+        argNames: ["publicKey", "message", "identity"],
+      );
+
+  Future<String> encryptTimeLockG1(
+      {required String publicKey,
+      required Uint8List message,
+      required Uint8List identity,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(publicKey);
+    var arg1 = _platform.api2wire_uint_8_list(message);
+    var arg2 = _platform.api2wire_uint_8_list(identity);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_encrypt_time_lock_g1(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kEncryptTimeLockG1ConstMeta,
+      argValues: [publicKey, message, identity],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kEncryptTimeLockG1ConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "encrypt_time_lock_g1",
         argNames: ["publicKey", "message", "identity"],
       );
 
@@ -133,6 +158,89 @@ class NativeImpl implements Native {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "combine_signature_shares_inner_g2",
         argNames: ["shares"],
+      );
+
+  Future<String> verifyAndDecryptWithSignatureShares(
+      {required String publicKey,
+      required String identity,
+      required String ciphertext,
+      required List<String> shares,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(publicKey);
+    var arg1 = _platform.api2wire_String(identity);
+    var arg2 = _platform.api2wire_String(ciphertext);
+    var arg3 = _platform.api2wire_StringList(shares);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner
+          .wire_verify_and_decrypt_with_signature_shares(
+              port_, arg0, arg1, arg2, arg3),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kVerifyAndDecryptWithSignatureSharesConstMeta,
+      argValues: [publicKey, identity, ciphertext, shares],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta
+      get kVerifyAndDecryptWithSignatureSharesConstMeta =>
+          const FlutterRustBridgeTaskConstMeta(
+            debugName: "verify_and_decrypt_with_signature_shares",
+            argNames: ["publicKey", "identity", "ciphertext", "shares"],
+          );
+
+  Future<String> verifyAndDecryptG2(
+      {required String publicKey,
+      required Uint8List identity,
+      required Uint8List ciphertext,
+      required List<String> shares,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(publicKey);
+    var arg1 = _platform.api2wire_uint_8_list(identity);
+    var arg2 = _platform.api2wire_uint_8_list(ciphertext);
+    var arg3 = _platform.api2wire_StringList(shares);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner
+          .wire_verify_and_decrypt_g2(port_, arg0, arg1, arg2, arg3),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kVerifyAndDecryptG2ConstMeta,
+      argValues: [publicKey, identity, ciphertext, shares],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kVerifyAndDecryptG2ConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "verify_and_decrypt_g2",
+        argNames: ["publicKey", "identity", "ciphertext", "shares"],
+      );
+
+  Future<String> verifyAndDecryptG1(
+      {required String publicKey,
+      required Uint8List identity,
+      required Uint8List ciphertext,
+      required List<String> shares,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(publicKey);
+    var arg1 = _platform.api2wire_uint_8_list(identity);
+    var arg2 = _platform.api2wire_uint_8_list(ciphertext);
+    var arg3 = _platform.api2wire_StringList(shares);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner
+          .wire_verify_and_decrypt_g1(port_, arg0, arg1, arg2, arg3),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kVerifyAndDecryptG1ConstMeta,
+      argValues: [publicKey, identity, ciphertext, shares],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kVerifyAndDecryptG1ConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "verify_and_decrypt_g1",
+        argNames: ["publicKey", "identity", "ciphertext", "shares"],
       );
 
   Future<Platform> platform({dynamic hint}) {
@@ -376,13 +484,13 @@ class NativeWire implements FlutterRustBridgeWireBase {
       void Function(int, ffi.Pointer<wire_uint_8_list>,
           ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
-  void wire_encrypt_time_lock(
+  void wire_encrypt_time_lock_g2(
     int port_,
     ffi.Pointer<wire_uint_8_list> public_key,
     ffi.Pointer<wire_uint_8_list> message,
     ffi.Pointer<wire_uint_8_list> identity,
   ) {
-    return _wire_encrypt_time_lock(
+    return _wire_encrypt_time_lock_g2(
       port_,
       public_key,
       message,
@@ -390,16 +498,43 @@ class NativeWire implements FlutterRustBridgeWireBase {
     );
   }
 
-  late final _wire_encrypt_time_lockPtr = _lookup<
+  late final _wire_encrypt_time_lock_g2Ptr = _lookup<
       ffi.NativeFunction<
           ffi.Void Function(
               ffi.Int64,
               ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>,
-              ffi.Pointer<wire_uint_8_list>)>>('wire_encrypt_time_lock');
-  late final _wire_encrypt_time_lock = _wire_encrypt_time_lockPtr.asFunction<
-      void Function(int, ffi.Pointer<wire_uint_8_list>,
-          ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+              ffi.Pointer<wire_uint_8_list>)>>('wire_encrypt_time_lock_g2');
+  late final _wire_encrypt_time_lock_g2 =
+      _wire_encrypt_time_lock_g2Ptr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_encrypt_time_lock_g1(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> public_key,
+    ffi.Pointer<wire_uint_8_list> message,
+    ffi.Pointer<wire_uint_8_list> identity,
+  ) {
+    return _wire_encrypt_time_lock_g1(
+      port_,
+      public_key,
+      message,
+      identity,
+    );
+  }
+
+  late final _wire_encrypt_time_lock_g1Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_encrypt_time_lock_g1');
+  late final _wire_encrypt_time_lock_g1 =
+      _wire_encrypt_time_lock_g1Ptr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
   void wire_combine_signature_shares(
     int port_,
@@ -453,6 +588,106 @@ class NativeWire implements FlutterRustBridgeWireBase {
   late final _wire_combine_signature_shares_inner_g2 =
       _wire_combine_signature_shares_inner_g2Ptr
           .asFunction<void Function(int, ffi.Pointer<wire_StringList>)>();
+
+  void wire_verify_and_decrypt_with_signature_shares(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> public_key,
+    ffi.Pointer<wire_uint_8_list> identity,
+    ffi.Pointer<wire_uint_8_list> ciphertext,
+    ffi.Pointer<wire_StringList> shares,
+  ) {
+    return _wire_verify_and_decrypt_with_signature_shares(
+      port_,
+      public_key,
+      identity,
+      ciphertext,
+      shares,
+    );
+  }
+
+  late final _wire_verify_and_decrypt_with_signature_sharesPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(
+                  ffi.Int64,
+                  ffi.Pointer<wire_uint_8_list>,
+                  ffi.Pointer<wire_uint_8_list>,
+                  ffi.Pointer<wire_uint_8_list>,
+                  ffi.Pointer<wire_StringList>)>>(
+      'wire_verify_and_decrypt_with_signature_shares');
+  late final _wire_verify_and_decrypt_with_signature_shares =
+      _wire_verify_and_decrypt_with_signature_sharesPtr.asFunction<
+          void Function(
+              int,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>();
+
+  void wire_verify_and_decrypt_g2(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> public_key,
+    ffi.Pointer<wire_uint_8_list> identity,
+    ffi.Pointer<wire_uint_8_list> ciphertext,
+    ffi.Pointer<wire_StringList> shares,
+  ) {
+    return _wire_verify_and_decrypt_g2(
+      port_,
+      public_key,
+      identity,
+      ciphertext,
+      shares,
+    );
+  }
+
+  late final _wire_verify_and_decrypt_g2Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>>('wire_verify_and_decrypt_g2');
+  late final _wire_verify_and_decrypt_g2 =
+      _wire_verify_and_decrypt_g2Ptr.asFunction<
+          void Function(
+              int,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>();
+
+  void wire_verify_and_decrypt_g1(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> public_key,
+    ffi.Pointer<wire_uint_8_list> identity,
+    ffi.Pointer<wire_uint_8_list> ciphertext,
+    ffi.Pointer<wire_StringList> shares,
+  ) {
+    return _wire_verify_and_decrypt_g1(
+      port_,
+      public_key,
+      identity,
+      ciphertext,
+      shares,
+    );
+  }
+
+  late final _wire_verify_and_decrypt_g1Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>>('wire_verify_and_decrypt_g1');
+  late final _wire_verify_and_decrypt_g1 =
+      _wire_verify_and_decrypt_g1Ptr.asFunction<
+          void Function(
+              int,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>();
 
   void wire_platform(
     int port_,

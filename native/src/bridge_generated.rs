@@ -42,7 +42,7 @@ fn wire_encrypt_impl(
         },
     )
 }
-fn wire_encrypt_time_lock_impl(
+fn wire_encrypt_time_lock_g2_impl(
     port_: MessagePort,
     public_key: impl Wire2Api<String> + UnwindSafe,
     message: impl Wire2Api<Vec<u8>> + UnwindSafe,
@@ -50,7 +50,7 @@ fn wire_encrypt_time_lock_impl(
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
         WrapInfo {
-            debug_name: "encrypt_time_lock",
+            debug_name: "encrypt_time_lock_g2",
             port: Some(port_),
             mode: FfiCallMode::Normal,
         },
@@ -58,7 +58,27 @@ fn wire_encrypt_time_lock_impl(
             let api_public_key = public_key.wire2api();
             let api_message = message.wire2api();
             let api_identity = identity.wire2api();
-            move |task_callback| encrypt_time_lock(api_public_key, api_message, api_identity)
+            move |task_callback| encrypt_time_lock_g2(api_public_key, api_message, api_identity)
+        },
+    )
+}
+fn wire_encrypt_time_lock_g1_impl(
+    port_: MessagePort,
+    public_key: impl Wire2Api<String> + UnwindSafe,
+    message: impl Wire2Api<Vec<u8>> + UnwindSafe,
+    identity: impl Wire2Api<Vec<u8>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
+        WrapInfo {
+            debug_name: "encrypt_time_lock_g1",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_public_key = public_key.wire2api();
+            let api_message = message.wire2api();
+            let api_identity = identity.wire2api();
+            move |task_callback| encrypt_time_lock_g1(api_public_key, api_message, api_identity)
         },
     )
 }
@@ -107,6 +127,83 @@ fn wire_combine_signature_shares_inner_g2_impl(
         move || {
             let api_shares = shares.wire2api();
             move |task_callback| combine_signature_shares_inner_g2(api_shares)
+        },
+    )
+}
+fn wire_verify_and_decrypt_with_signature_shares_impl(
+    port_: MessagePort,
+    public_key: impl Wire2Api<String> + UnwindSafe,
+    identity: impl Wire2Api<String> + UnwindSafe,
+    ciphertext: impl Wire2Api<String> + UnwindSafe,
+    shares: impl Wire2Api<Vec<String>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
+        WrapInfo {
+            debug_name: "verify_and_decrypt_with_signature_shares",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_public_key = public_key.wire2api();
+            let api_identity = identity.wire2api();
+            let api_ciphertext = ciphertext.wire2api();
+            let api_shares = shares.wire2api();
+            move |task_callback| {
+                verify_and_decrypt_with_signature_shares(
+                    api_public_key,
+                    api_identity,
+                    api_ciphertext,
+                    api_shares,
+                )
+            }
+        },
+    )
+}
+fn wire_verify_and_decrypt_g2_impl(
+    port_: MessagePort,
+    public_key: impl Wire2Api<String> + UnwindSafe,
+    identity: impl Wire2Api<Vec<u8>> + UnwindSafe,
+    ciphertext: impl Wire2Api<Vec<u8>> + UnwindSafe,
+    shares: impl Wire2Api<Vec<String>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
+        WrapInfo {
+            debug_name: "verify_and_decrypt_g2",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_public_key = public_key.wire2api();
+            let api_identity = identity.wire2api();
+            let api_ciphertext = ciphertext.wire2api();
+            let api_shares = shares.wire2api();
+            move |task_callback| {
+                verify_and_decrypt_g2(api_public_key, api_identity, api_ciphertext, api_shares)
+            }
+        },
+    )
+}
+fn wire_verify_and_decrypt_g1_impl(
+    port_: MessagePort,
+    public_key: impl Wire2Api<String> + UnwindSafe,
+    identity: impl Wire2Api<Vec<u8>> + UnwindSafe,
+    ciphertext: impl Wire2Api<Vec<u8>> + UnwindSafe,
+    shares: impl Wire2Api<Vec<String>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
+        WrapInfo {
+            debug_name: "verify_and_decrypt_g1",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_public_key = public_key.wire2api();
+            let api_identity = identity.wire2api();
+            let api_ciphertext = ciphertext.wire2api();
+            let api_shares = shares.wire2api();
+            move |task_callback| {
+                verify_and_decrypt_g1(api_public_key, api_identity, api_ciphertext, api_shares)
+            }
         },
     )
 }
