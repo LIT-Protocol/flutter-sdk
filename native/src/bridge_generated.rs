@@ -207,6 +207,70 @@ fn wire_verify_and_decrypt_g1_impl(
         },
     )
 }
+fn wire_verify_signature_impl(
+    port_: MessagePort,
+    public_key: impl Wire2Api<String> + UnwindSafe,
+    message: impl Wire2Api<String> + UnwindSafe,
+    signature: impl Wire2Api<String> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+        WrapInfo {
+            debug_name: "verify_signature",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_public_key = public_key.wire2api();
+            let api_message = message.wire2api();
+            let api_signature = signature.wire2api();
+            move |task_callback| verify_signature(api_public_key, api_message, api_signature)
+        },
+    )
+}
+fn wire_verify_signature_inner_g2_impl(
+    port_: MessagePort,
+    public_key: impl Wire2Api<String> + UnwindSafe,
+    message: impl Wire2Api<Vec<u8>> + UnwindSafe,
+    signature: impl Wire2Api<Vec<u8>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+        WrapInfo {
+            debug_name: "verify_signature_inner_g2",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_public_key = public_key.wire2api();
+            let api_message = message.wire2api();
+            let api_signature = signature.wire2api();
+            move |task_callback| {
+                verify_signature_inner_g2(api_public_key, api_message, api_signature)
+            }
+        },
+    )
+}
+fn wire_verify_signature_inner_g1_impl(
+    port_: MessagePort,
+    public_key: impl Wire2Api<String> + UnwindSafe,
+    message: impl Wire2Api<Vec<u8>> + UnwindSafe,
+    signature: impl Wire2Api<Vec<u8>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+        WrapInfo {
+            debug_name: "verify_signature_inner_g1",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_public_key = public_key.wire2api();
+            let api_message = message.wire2api();
+            let api_signature = signature.wire2api();
+            move |task_callback| {
+                verify_signature_inner_g1(api_public_key, api_message, api_signature)
+            }
+        },
+    )
+}
 fn wire_platform_impl(port_: MessagePort) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Platform, _>(
         WrapInfo {

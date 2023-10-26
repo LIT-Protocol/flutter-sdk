@@ -243,6 +243,81 @@ class NativeImpl implements Native {
         argNames: ["publicKey", "identity", "ciphertext", "shares"],
       );
 
+  Future<void> verifySignature(
+      {required String publicKey,
+      required String message,
+      required String signature,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(publicKey);
+    var arg1 = _platform.api2wire_String(message);
+    var arg2 = _platform.api2wire_String(signature);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_verify_signature(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: _wire2api_String,
+      constMeta: kVerifySignatureConstMeta,
+      argValues: [publicKey, message, signature],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kVerifySignatureConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "verify_signature",
+        argNames: ["publicKey", "message", "signature"],
+      );
+
+  Future<void> verifySignatureInnerG2(
+      {required String publicKey,
+      required Uint8List message,
+      required Uint8List signature,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(publicKey);
+    var arg1 = _platform.api2wire_uint_8_list(message);
+    var arg2 = _platform.api2wire_uint_8_list(signature);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner
+          .wire_verify_signature_inner_g2(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: _wire2api_String,
+      constMeta: kVerifySignatureInnerG2ConstMeta,
+      argValues: [publicKey, message, signature],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kVerifySignatureInnerG2ConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "verify_signature_inner_g2",
+        argNames: ["publicKey", "message", "signature"],
+      );
+
+  Future<void> verifySignatureInnerG1(
+      {required String publicKey,
+      required Uint8List message,
+      required Uint8List signature,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(publicKey);
+    var arg1 = _platform.api2wire_uint_8_list(message);
+    var arg2 = _platform.api2wire_uint_8_list(signature);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner
+          .wire_verify_signature_inner_g1(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: _wire2api_String,
+      constMeta: kVerifySignatureInnerG1ConstMeta,
+      argValues: [publicKey, message, signature],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kVerifySignatureInnerG1ConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "verify_signature_inner_g1",
+        argNames: ["publicKey", "message", "signature"],
+      );
+
   Future<Platform> platform({dynamic hint}) {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_platform(port_),
@@ -321,6 +396,10 @@ class NativeImpl implements Native {
 
   Uint8List _wire2api_uint_8_list(dynamic raw) {
     return raw as Uint8List;
+  }
+
+  void _wire2api_unit(dynamic raw) {
+    return;
   }
 }
 
@@ -688,6 +767,85 @@ class NativeWire implements FlutterRustBridgeWireBase {
               ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_StringList>)>();
+
+  void wire_verify_signature(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> public_key,
+    ffi.Pointer<wire_uint_8_list> message,
+    ffi.Pointer<wire_uint_8_list> signature,
+  ) {
+    return _wire_verify_signature(
+      port_,
+      public_key,
+      message,
+      signature,
+    );
+  }
+
+  late final _wire_verify_signaturePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_verify_signature');
+  late final _wire_verify_signature = _wire_verify_signaturePtr.asFunction<
+      void Function(int, ffi.Pointer<wire_uint_8_list>,
+          ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_verify_signature_inner_g2(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> public_key,
+    ffi.Pointer<wire_uint_8_list> message,
+    ffi.Pointer<wire_uint_8_list> signature,
+  ) {
+    return _wire_verify_signature_inner_g2(
+      port_,
+      public_key,
+      message,
+      signature,
+    );
+  }
+
+  late final _wire_verify_signature_inner_g2Ptr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(
+                  ffi.Int64,
+                  ffi.Pointer<wire_uint_8_list>,
+                  ffi.Pointer<wire_uint_8_list>,
+                  ffi.Pointer<wire_uint_8_list>)>>(
+      'wire_verify_signature_inner_g2');
+  late final _wire_verify_signature_inner_g2 =
+      _wire_verify_signature_inner_g2Ptr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_verify_signature_inner_g1(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> public_key,
+    ffi.Pointer<wire_uint_8_list> message,
+    ffi.Pointer<wire_uint_8_list> signature,
+  ) {
+    return _wire_verify_signature_inner_g1(
+      port_,
+      public_key,
+      message,
+      signature,
+    );
+  }
+
+  late final _wire_verify_signature_inner_g1Ptr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(
+                  ffi.Int64,
+                  ffi.Pointer<wire_uint_8_list>,
+                  ffi.Pointer<wire_uint_8_list>,
+                  ffi.Pointer<wire_uint_8_list>)>>(
+      'wire_verify_signature_inner_g1');
+  late final _wire_verify_signature_inner_g1 =
+      _wire_verify_signature_inner_g1Ptr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
   void wire_platform(
     int port_,

@@ -3,12 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'ffi.dart' if (dart.library.html) 'ffi_web.dart';
 import 'dart:typed_data';
-
-String byteArrayToHex(Uint8List byteArray) {
-  return byteArray.map((byte) {
-    return byte.toRadixString(16).padLeft(2, '0');
-  }).join('');
-}
+import 'package:convert/convert.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: '🧪 Manual Tests | Lit Flutter SDK'),
     );
   }
 }
@@ -109,13 +104,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            const Text("BLS-SDK Manual Tests"),
-            // LitButton(
-            //   buttonText: 'Run HelloWorld',
-            //   callback: api.helloWorld,
-            // ),
+            Container(margin: const EdgeInsets.only(top: 24)),
+            Text("BLS-SDK", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Container(margin: const EdgeInsets.only(top: 24)),
             LitButton(
               buttonText: "encrypt",
               callback: () async {
@@ -131,8 +124,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     119, 111, 114, 107, 115,
                   ]);
 
-                  String encodedMessage = byteArrayToHex(secretMessage);
-                  String encodedIdentity = byteArrayToHex(identityParam);
+                  String encodedMessage = hex.encode(secretMessage);
+                  String encodedIdentity = hex.encode(identityParam);
 
                   var data = await api.encrypt(
                     publicKey: publicKey, 
@@ -197,12 +190,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   119, 111, 114, 107, 115,
                 ]);
 
-                print("\n---------- 🦋 Flutter Frontend ----------\n");
-                print("Hello");
-
                 print("\n---------- 🦀 RUST Backend ----------\n");
 
-                String encodedIdentity = byteArrayToHex(identityParam);
+                String encodedIdentity = hex.encode(identityParam);
 
                 var decryptedBase64Data = await api.verifyAndDecryptWithSignatureShares(
                   publicKey: publicKey,
@@ -226,6 +216,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 return decryptedBase64Data;
               },
+            ),
+            LitButton(
+              buttonText: "verifySignature",
+              callback: () async {
+                  const publicKey = 'ad1bd6c66f849ccbcc20fa08c26108f3df7db0068df032cc184779cc967159da4dd5669de563af7252b540f0759aee5a';
+
+                  // base64 str
+                  const message = 'ZXlKaGJHY2lPaUpDVEZNeE1pMHpPREVpTENKMGVYQWlPaUpLVjFRaWZRLmV5SnBjM01pT2lKTVNWUWlMQ0p6ZFdJaU9pSXdlRFF5TlRsbE5EUTJOekF3TlRNME9URmxOMkkwWm1VMFlURXlNR00zTUdKbE1XVmhaRFkwTm1JaUxDSmphR0ZwYmlJNkltVjBhR1Z5WlhWdElpd2lhV0YwSWpveE5qZzNOVFl5TWpjMUxDSmxlSEFpT2pFMk9EYzJNRFUwTnpVc0ltRmpZMlZ6YzBOdmJuUnliMnhEYjI1a2FYUnBiMjV6SWpwYmV5SmpiMjUwY21GamRFRmtaSEpsYzNNaU9pSWlMQ0pqYUdGcGJpSTZJbVYwYUdWeVpYVnRJaXdpYzNSaGJtUmhjbVJEYjI1MGNtRmpkRlI1Y0dVaU9pSWlMQ0p0WlhSb2IyUWlPaUlpTENKd1lYSmhiV1YwWlhKeklqcGJJanAxYzJWeVFXUmtjbVZ6Y3lKZExDSnlaWFIxY201V1lXeDFaVlJsYzNRaU9uc2lZMjl0Y0dGeVlYUnZjaUk2SWowaUxDSjJZV3gxWlNJNklqQjROREkxT1VVME5EWTNNREExTXpRNU1VVTNZalJHUlRSQk1USXdRemN3WW1VeFpVRkVOalEyWWlKOWZWMHNJbVYyYlVOdmJuUnlZV04wUTI5dVpHbDBhVzl1Y3lJNmJuVnNiQ3dpYzI5c1VuQmpRMjl1WkdsMGFXOXVjeUk2Ym5Wc2JDd2lkVzVwWm1sbFpFRmpZMlZ6YzBOdmJuUnliMnhEYjI1a2FYUnBiMjV6SWpwdWRXeHNmUQ==';
+
+                  // base64 str
+                  const signature = 'trkIFY8XLxWAHvErjc5sEMfyEMjDVW0m4zSEiO8Ladb+F2vsaUmBMPIR4axyHdayDJ7/qdxUsxM1Xt/AUMcYRCVbUqNZZmkAGtOFGODAjieGdv9Q3aPnsrQXkDzW0ITP';
+
+                  print("\n---------- 🦀 RUST Backend ----------\n");
+                  try{
+                    await api.verifySignature(publicKey: publicKey, message: message, signature: signature);
+                    print("✅ SUCCESS, signature is valid");
+                    return "✅ SUCCESS, signature is valid";
+                  }catch(e){
+                    print("❌ FAILED, signature is invalid");
+                    return "❌ FAILED, signature is invalid";
+                  }
+              }
             ),
           ],
         ),

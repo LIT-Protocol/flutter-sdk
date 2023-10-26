@@ -76,6 +76,30 @@ abstract class Native {
 
   FlutterRustBridgeTaskConstMeta get kVerifyAndDecryptG1ConstMeta;
 
+  Future<void> verifySignature(
+      {required String publicKey,
+      required String message,
+      required String signature,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kVerifySignatureConstMeta;
+
+  Future<void> verifySignatureInnerG2(
+      {required String publicKey,
+      required Uint8List message,
+      required Uint8List signature,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kVerifySignatureInnerG2ConstMeta;
+
+  Future<void> verifySignatureInnerG1(
+      {required String publicKey,
+      required Uint8List message,
+      required Uint8List signature,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kVerifySignatureInnerG1ConstMeta;
+
   Future<Platform> platform({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kPlatformConstMeta;

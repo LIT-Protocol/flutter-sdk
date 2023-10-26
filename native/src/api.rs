@@ -353,6 +353,86 @@ pub fn verify_and_decrypt_g1(
         .ok_or_else(|| "🚨 Failed to decrypt".to_string())
 }
 
+pub fn verify_signature(
+    public_key: String,
+    message: String, // base64 expected
+    signature: String // base64 expected
+) -> Result<(), String> {
+    // Decode the hex-encoded public_key string to its byte representation.
+    // For example, the hex string "48656c6c6f" would be decoded to the byte array [72, 101, 108, 108, 111].
+    // After decoding, the byte array's length will be half the length of the original hex string.
+    // This is because each byte is represented by two hex characters in the string.
+    let public_key_bytes = hex::decode(&public_key).map_err(|e| e.to_string())?;
+    let message_bytes = base64_decode(&message);
+    let signature_bytes = base64_decode(&signature);
+
+    if public_key_bytes.len() == SIGNATURE_G2_PUBLIC_KEY_HEX_LENGTH / 2 {
+        return verify_signature_inner_g2(public_key, message_bytes, signature_bytes);
+    } else if public_key_bytes.len() == SIGNATURE_G1_PUBLIC_KEY_HEX_LENGTH / 2 {
+        return verify_signature_inner_g1(public_key, message_bytes, signature_bytes);
+    } else {
+        return Err(
+            format!(
+                "🚨 Invalid public key length. Received byte length: {}, expected byte lengths corresponding to 96 or 192 hexits.",
+                public_key_bytes.len()
+            )
+        );
+    }
+}
+
+pub fn verify_signature_inner_g2(
+    public_key: String,
+    message: Vec<u8>,
+    signature: Vec<u8>
+) -> Result<(), String> {
+    // Convert the public key from a hex string to a PublicKey object.
+    // For example, the hex string "0x1234abcd" would be converted to a PublicKey object.
+    // After conversion, the PublicKey object can be used for cryptographic operations.
+    // This is because the PublicKey object represents the public key in a format that the cryptographic library can understand.
+    let json_hex_string_public_key = format!("\"{}\"", public_key);
+
+    let key = serde_json
+        ::from_str::<PublicKey<Bls12381G2Impl>>(&json_hex_string_public_key)
+        .map_err(|_e| "🚨 Failed to parse public key as a json hex string".to_string())?;
+
+    // The compressed signature of 96 bytes.
+    let g2_projective = G2Projective::from_compressed(
+        &signature.try_into().map_err(|_e| "Failed to cast to compressed byte slice".to_string())?
+    ).unwrap();
+
+    let signature: Signature<Bls12381G2Impl> = Signature::ProofOfPossession(g2_projective);
+
+    signature.verify(&key, message).map_err(|_e| "Failed to verify signature".to_string())?;
+
+    Ok(())
+}
+
+pub fn verify_signature_inner_g1(
+    public_key: String,
+    message: Vec<u8>,
+    signature: Vec<u8>
+) -> Result<(), String> {
+    // Convert the public key from a hex string to a PublicKey object.
+    // For example, the hex string "0x1234abcd" would be converted to a PublicKey object.
+    // After conversion, the PublicKey object can be used for cryptographic operations.
+    // This is because the PublicKey object represents the public key in a format that the cryptographic library can understand.
+    let json_hex_string_public_key = format!("\"{}\"", public_key);
+
+    let key = serde_json
+        ::from_str::<PublicKey<Bls12381G1Impl>>(&json_hex_string_public_key)
+        .map_err(|_e| "🚨 Failed to parse public key as a json hex string".to_string())?;
+
+    // The compressed signature of 48 bytes.
+    let g1_projective = G1Projective::from_compressed(
+        &signature.try_into().map_err(|_e| "Failed to cast to compressed byte slice".to_string())?
+    ).unwrap();
+    let signature: Signature<Bls12381G1Impl> = Signature::ProofOfPossession(g1_projective);
+
+    signature.verify(&key, message).map_err(|_e| "Failed to verify signature".to_string())?;
+
+    Ok(())
+}
+
 pub enum Platform {
     Unknown,
     Android,

@@ -82,6 +82,36 @@ pub extern "C" fn wire_verify_and_decrypt_g1(
 }
 
 #[no_mangle]
+pub extern "C" fn wire_verify_signature(
+    port_: i64,
+    public_key: *mut wire_uint_8_list,
+    message: *mut wire_uint_8_list,
+    signature: *mut wire_uint_8_list,
+) {
+    wire_verify_signature_impl(port_, public_key, message, signature)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_verify_signature_inner_g2(
+    port_: i64,
+    public_key: *mut wire_uint_8_list,
+    message: *mut wire_uint_8_list,
+    signature: *mut wire_uint_8_list,
+) {
+    wire_verify_signature_inner_g2_impl(port_, public_key, message, signature)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_verify_signature_inner_g1(
+    port_: i64,
+    public_key: *mut wire_uint_8_list,
+    message: *mut wire_uint_8_list,
+    signature: *mut wire_uint_8_list,
+) {
+    wire_verify_signature_inner_g1_impl(port_, public_key, message, signature)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_platform(port_: i64) {
     wire_platform_impl(port_)
 }
