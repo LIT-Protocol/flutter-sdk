@@ -141,7 +141,7 @@ pub extern "C" fn wire_decrypt_time_lock_g1(
 // Section: allocate functions
 
 #[no_mangle]
-pub extern "C" fn new_StringList_0(len: i32) -> *mut wire_StringList {
+pub extern "C" fn new_StringList_2(len: i32) -> *mut wire_StringList {
     let wrap = wire_StringList {
         ptr: support::new_leak_vec_ptr(<*mut wire_uint_8_list>::new_with_null_ptr(), len),
         len,
@@ -150,7 +150,7 @@ pub extern "C" fn new_StringList_0(len: i32) -> *mut wire_StringList {
 }
 
 #[no_mangle]
-pub extern "C" fn new_uint_8_list_0(len: i32) -> *mut wire_uint_8_list {
+pub extern "C" fn new_uint_8_list_2(len: i32) -> *mut wire_uint_8_list {
     let ans = wire_uint_8_list {
         ptr: support::new_leak_vec_ptr(Default::default(), len),
         len,
@@ -212,13 +212,4 @@ impl<T> NewWithNullPtr for *mut T {
     fn new_with_null_ptr() -> Self {
         std::ptr::null_mut()
     }
-}
-
-// Section: sync execution mode utility
-
-#[no_mangle]
-pub extern "C" fn free_WireSyncReturn(ptr: support::WireSyncReturn) {
-    unsafe {
-        let _ = support::box_from_leak_ptr(ptr);
-    };
 }
