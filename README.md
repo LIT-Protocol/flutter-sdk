@@ -1,4 +1,4 @@
-# Lit-SDK Flutter Bridge
+# 🦋 Lit Flutter SDK
 
 ![](https://im5.ezgif.com/tmp/ezgif-5-f02a3b99ba.gif)
 
