@@ -119,6 +119,16 @@ abstract class Native {
 
   FlutterRustBridgeTaskConstMeta get kDecryptTimeLockG1ConstMeta;
 
+  Future<String> combineSignature(
+      {required List<String> inShares, required int keyType, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kCombineSignatureConstMeta;
+
+  Future<String> computePublicKey(
+      {required String id, required List<String> publicKeys, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kComputePublicKeyConstMeta;
+
   Future<Platform> platform({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kPlatformConstMeta;

@@ -325,6 +325,42 @@ fn wire_decrypt_time_lock_g1_impl(
         },
     )
 }
+fn wire_combine_signature_impl(
+    port_: MessagePort,
+    in_shares: impl Wire2Api<Vec<String>> + UnwindSafe,
+    key_type: impl Wire2Api<u8> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
+        WrapInfo {
+            debug_name: "combine_signature",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_in_shares = in_shares.wire2api();
+            let api_key_type = key_type.wire2api();
+            move |task_callback| combine_signature(api_in_shares, api_key_type)
+        },
+    )
+}
+fn wire_compute_public_key_impl(
+    port_: MessagePort,
+    id: impl Wire2Api<String> + UnwindSafe,
+    public_keys: impl Wire2Api<Vec<String>> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
+        WrapInfo {
+            debug_name: "compute_public_key",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_id = id.wire2api();
+            let api_public_keys = public_keys.wire2api();
+            move |task_callback| Result::<_, ()>::Ok(compute_public_key(api_id, api_public_keys))
+        },
+    )
+}
 fn wire_platform_impl(port_: MessagePort) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Platform, _>(
         WrapInfo {

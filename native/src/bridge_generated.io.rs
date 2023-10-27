@@ -139,6 +139,24 @@ pub extern "C" fn wire_decrypt_time_lock_g1(
 }
 
 #[no_mangle]
+pub extern "C" fn wire_combine_signature(
+    port_: i64,
+    in_shares: *mut wire_StringList,
+    key_type: u8,
+) {
+    wire_combine_signature_impl(port_, in_shares, key_type)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_compute_public_key(
+    port_: i64,
+    id: *mut wire_uint_8_list,
+    public_keys: *mut wire_StringList,
+) {
+    wire_compute_public_key_impl(port_, id, public_keys)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_platform(port_: i64) {
     wire_platform_impl(port_)
 }

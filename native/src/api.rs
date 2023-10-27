@@ -1,31 +1,31 @@
-extern crate quote;
-use quote::quote;
-use serde::Deserialize;
+use std::collections::HashSet;
+
 use base64_light::{ base64_decode, base64_encode_bytes };
 use blsful::inner_types::{ G1Projective, G2Projective, GroupEncoding };
 use blsful::{
     Bls12381G1Impl,
     Bls12381G2Impl,
-    BlsSignatureImpl,
     PublicKey,
     Signature,
     SignatureSchemes,
     SignatureShare,
     TimeCryptCiphertext,
 };
-use serde::{ de::DeserializeOwned, Serialize };
 use serde_json;
 use base64;
 use hex;
-use std::collections::HashMap;
-use std::fmt::format;
 use blsful::Pairing;
+use lit_ecdsa_wasm_combine::{ combiners };
 
 const SIGNATURE_G2_PUBLIC_KEY_HEX_LENGTH: usize = 96;
 const SIGNATURE_G1_PUBLIC_KEY_HEX_LENGTH: usize = 192;
 const SIGNATURE_G1_SHARE_HEX_LENGTH: usize = 122;
 const SIGNATURE_G2_SHARE_HEX_LENGTH: usize = 218;
 
+// -- ECDSA
+use serde_json::Value;
+use k256::Secp256k1;
+// ==================== BLS SDK ====================
 // The encrypt function takes three parameters:
 // - public_key: Expected data type: String (e.g., "0x1234abcd...")
 // - message: Expected data type: String (e.g., "0x5678efgh...")
@@ -525,6 +525,88 @@ pub fn decrypt_time_lock_g1(ciphertext: Vec<u8>, shares: Vec<String>) -> Result<
         .ok_or_else(|| "🚨 Failed to decrypt".to_string())
 }
 
+// ==================== ECDSA SDK ====================
+pub fn combine_signature(in_shares: Vec<String>, key_type: u8) -> Result<String, String> {
+    let required_keys: HashSet<&str> = [
+        "sig_type",
+        "signature_share",
+        "share_index",
+        "big_r",
+        "public_key",
+        "data_signed",
+        "sig_name",
+    ]
+        .iter()
+        .cloned()
+        .collect();
+
+    let supported_keys = [2, 3];
+
+    if !supported_keys.contains(&key_type) {
+        return Err(
+            format!(
+                "🚨 Unsupported key type: {}. Supported keys are: {:?}",
+                key_type,
+                supported_keys
+            )
+        );
+    }
+
+    let mut shares: Vec<String> = Vec::with_capacity(in_shares.len());
+
+    for share in in_shares {
+        let parsed_json: serde_json::Value = serde_json
+            ::from_str(&share)
+            .map_err(|_e| format!("🚨 Failed to parse shares, received {}", share))?;
+
+        // -- check if there are missing keys. The idea is that "missing keys" starts with all required keys
+        // and we remove the ones that are present in the JSON object. If there are any keys left, then
+        // we know that the JSON object is missing some keys.
+        let mut missing_keys = required_keys.clone();
+        if let Value::Object(map) = &parsed_json {
+            for key in map.keys() {
+                missing_keys.remove(key.as_str());
+            }
+        }
+
+        if !missing_keys.is_empty() {
+            return Err(format!("🚨 Missing keys: {:?}", missing_keys));
+        }
+
+        // -- push the share
+        shares.push(share);
+    }
+
+    if key_type == 2 {
+        return Ok(combiners::k256_cait_sith::combine_signature(shares));
+    } else if key_type == 3 {
+        return Ok(combiners::p256_cait_sith::combine_signature(shares));
+    } else {
+        return Err(format!("🚨 Unsupported key type: {}", key_type));
+    }
+}
+
+pub fn compute_public_key(id: String, public_keys: Vec<String>) -> String {        
+    use k256::elliptic_curve::sec1::FromEncodedPoint;
+    use k256::elliptic_curve::sec1::ToEncodedPoint;
+
+    let mut hd_pub_keys = Vec::with_capacity(public_keys.len() as usize);
+    for pubkey in public_keys.iter() {
+        let hex_pub_key = hex::decode(pubkey).unwrap();
+        let a_p = k256::ProjectivePoint
+            ::from_encoded_point(&k256::EncodedPoint::from_bytes(hex_pub_key.as_slice()).unwrap())
+            .unwrap();
+        hd_pub_keys.push(a_p);
+    }
+    let deriver = combiners::hd_ecdsa::HdKeyDeriver::<Secp256k1>
+        ::new(id.as_bytes(), combiners::hd_ecdsa::CXT)
+        .unwrap();
+
+    let pubkey = deriver.compute_public_key(&hd_pub_keys.as_slice());
+    let pubkey = hex::encode(pubkey.to_encoded_point(false).as_bytes());
+    return pubkey;
+}
+// ==================== Native ====================
 pub enum Platform {
     Unknown,
     Android,

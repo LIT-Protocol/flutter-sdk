@@ -387,6 +387,48 @@ class NativeImpl implements Native {
         argNames: ["ciphertext", "shares"],
       );
 
+  Future<String> combineSignature(
+      {required List<String> inShares, required int keyType, dynamic hint}) {
+    var arg0 = _platform.api2wire_StringList(inShares);
+    var arg1 = api2wire_u8(keyType);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_combine_signature(port_, arg0, arg1),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_String,
+      constMeta: kCombineSignatureConstMeta,
+      argValues: [inShares, keyType],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kCombineSignatureConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "combine_signature",
+        argNames: ["inShares", "keyType"],
+      );
+
+  Future<String> computePublicKey(
+      {required String id, required List<String> publicKeys, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(id);
+    var arg1 = _platform.api2wire_StringList(publicKeys);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_compute_public_key(port_, arg0, arg1),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: null,
+      constMeta: kComputePublicKeyConstMeta,
+      argValues: [id, publicKeys],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kComputePublicKeyConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "compute_public_key",
+        argNames: ["id", "publicKeys"],
+      );
+
   Future<Platform> platform({dynamic hint}) {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_platform(port_),
@@ -962,6 +1004,45 @@ class NativeWire implements FlutterRustBridgeWireBase {
       _wire_decrypt_time_lock_g1Ptr.asFunction<
           void Function(int, ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_StringList>)>();
+
+  void wire_combine_signature(
+    int port_,
+    ffi.Pointer<wire_StringList> in_shares,
+    int key_type,
+  ) {
+    return _wire_combine_signature(
+      port_,
+      in_shares,
+      key_type,
+    );
+  }
+
+  late final _wire_combine_signaturePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_StringList>,
+              ffi.Uint8)>>('wire_combine_signature');
+  late final _wire_combine_signature = _wire_combine_signaturePtr
+      .asFunction<void Function(int, ffi.Pointer<wire_StringList>, int)>();
+
+  void wire_compute_public_key(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> id,
+    ffi.Pointer<wire_StringList> public_keys,
+  ) {
+    return _wire_compute_public_key(
+      port_,
+      id,
+      public_keys,
+    );
+  }
+
+  late final _wire_compute_public_keyPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_StringList>)>>('wire_compute_public_key');
+  late final _wire_compute_public_key = _wire_compute_public_keyPtr.asFunction<
+      void Function(
+          int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_StringList>)>();
 
   void wire_platform(
     int port_,

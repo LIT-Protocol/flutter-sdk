@@ -25,6 +25,10 @@ wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 quote = "1.0"
 sha2 = "0.10.8"
 base64 = "0.13"
+lit-ecdsa-wasm-combine = { git = 'https://github.com/LIT-Protocol/lit-ecdsa-wasm-combine' }
+js-sys = "0.3.59"
+k256 = { version = "0.13.0", features = ["sha256", "ecdsa", "serde", "ecdsa-core", "expose-field", "hash2curve"], optional = false }
+p256 = { version = "0.13", features = ["ecdsa-core", "expose-field", "hash2curve", "sha256", "serde"] }
 
 [dev-dependencies]
 ciborium = "0.2"
