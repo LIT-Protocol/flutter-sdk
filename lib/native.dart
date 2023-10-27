@@ -5,7 +5,9 @@ import 'dart:ffi';
 
 import 'dart:io' as io;
 
-import 'package:flutter_rust_bridge_template/bridge_generated.dart';
+import 'package:flutter_rust_bridge_template/bridge_generated_api.dart';
+import 'package:flutter_rust_bridge_template/bridge_generated_ecdsa.dart';
+import 'package:flutter_rust_bridge_template/bridge_generated_bls.dart';
 
 const _base = 'native';
 
@@ -13,6 +15,14 @@ const _base = 'native';
 // but rather directly **linked** against the binary.
 final _dylib = io.Platform.isWindows ? '$_base.dll' : 'lib$_base.so';
 
-final api = NativeImpl(io.Platform.isIOS || io.Platform.isMacOS
+final api = NativeAPIImpl(io.Platform.isIOS || io.Platform.isMacOS
+    ? DynamicLibrary.executable()
+    : DynamicLibrary.open(_dylib));
+
+final ecdsa = ECDSAImpl(io.Platform.isIOS || io.Platform.isMacOS
+    ? DynamicLibrary.executable()
+    : DynamicLibrary.open(_dylib));
+
+final bls = BLSImpl(io.Platform.isIOS || io.Platform.isMacOS
     ? DynamicLibrary.executable()
     : DynamicLibrary.open(_dylib));
