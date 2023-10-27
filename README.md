@@ -1,6 +1,6 @@
 # 🦋 Lit Flutter SDK
 
-![](https://im5.ezgif.com/tmp/ezgif-5-f02a3b99ba.gif)
+![](https://i.imgur.com/iCKIji9.gif)
 
 # Prerequisite
 
