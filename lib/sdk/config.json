@@ -1,0 +1,16 @@
+{
+  "X-Lit-SDK-Version": "0.0.1",
+  "X-Lit-SDK-Type": "Flutter",
+  "X-Request-Id": "lit_flutter_",
+  "minNodeCount": 2,
+  "lit_node_apis": {
+    "handshake": "/web/handshake"
+  },
+  "lit_networks": {
+    "cayenne": [
+      "https://cayenne.litgateway.com:7370",
+      "https://cayenne.litgateway.com:7371",
+      "https://cayenne.litgateway.com:7372"
+    ]
+  }
+}
