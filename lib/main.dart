@@ -111,11 +111,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               Container(margin: const EdgeInsets.only(top: 6)),
               LitButton(
-                buttonText: "SDK Test",
+                buttonText: "Connect to Lit Nodes",
                 callback: () async {
                   LitNodeClient litNodeClient = new LitNodeClient();
                   bool connected = await litNodeClient.connect();
-                  print(connected);
+                  return "connected: $connected";
+                },
+              ),
+              LitButton(
+                buttonText: "Connect to Lit Nodes",
+                callback: () async {
+                  LitNodeClient litNodeClient = new LitNodeClient();
+                  bool connected = await litNodeClient.connect();
                   return "connected: $connected";
                 },
               ),
