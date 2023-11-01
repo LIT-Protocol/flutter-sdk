@@ -22,6 +22,22 @@ class CanonicalEVMCondition {
         functionAbi = json['functionAbi'],
         chain = json['chain'],
         returnValueTest = json['returnValueTest'];
+
+  Map<String, dynamic> toJson(CanonicalEVMCondition canonicalEVMConditions) {
+    return {
+      'contractAddress': canonicalEVMConditions.contractAddress,
+      'functionName': canonicalEVMConditions.functionName,
+      'functionParams': canonicalEVMConditions.functionParams,
+      'functionAbi': canonicalEVMConditions.functionAbi,
+      'chain': canonicalEVMConditions.chain,
+      'returnValueTest': canonicalEVMConditions.returnValueTest,
+    };
+  }
+
+  static List<Map<String, dynamic>> toJsonList(
+      List<CanonicalEVMCondition> list) {
+    return list.map((item) => item.toJson(item)).toList();
+  }
 }
 
 class CanonicalAccessControlCondition {
