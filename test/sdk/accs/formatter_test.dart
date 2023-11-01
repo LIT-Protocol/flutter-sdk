@@ -167,15 +167,15 @@ void main() {
     var result =
         canonicalUnifiedAccessControlConditionFormatter(unifiedConditions);
 
-    var castedType = CanonicalUnifiedCondition.fromJson(result[1]);
-    var castedType2 = CanonicalUnifiedCondition.fromJson(result[2]);
+    var castedType = CanonicalUnifiedConditions.fromJson(result[1]);
+    var castedType2 = CanonicalUnifiedConditions.fromJson(result[2]);
 
     // Test common property
     expect(castedType.chain, 'ethereum');
     expect(castedType2.chain, 'ethereum');
 
     for (var item in result) {
-      var castedType = CanonicalUnifiedCondition.fromJson(item);
+      var castedType = CanonicalUnifiedConditions.fromJson(item);
 
       // Additional checks based on the conditionType
       if (castedType.conditionType == 'evmBasic') {

@@ -64,9 +64,27 @@ class CanonicalAccessControlCondition {
         method = json['method'],
         parameters = json['parameters'],
         returnValueTest = json['returnValueTest'];
+
+  Map<String, dynamic> toJson(
+      CanonicalAccessControlCondition canonicalAccessControlConditions) {
+    return {
+      'contractAddress': canonicalAccessControlConditions.contractAddress,
+      'chain': canonicalAccessControlConditions.chain,
+      'standardContractType':
+          canonicalAccessControlConditions.standardContractType,
+      'method': canonicalAccessControlConditions.method,
+      'parameters': canonicalAccessControlConditions.parameters,
+      'returnValueTest': canonicalAccessControlConditions.returnValueTest,
+    };
+  }
+
+  static List<Map<String, dynamic>> toJsonList(
+      List<CanonicalAccessControlCondition> list) {
+    return list.map((item) => item.toJson(item)).toList();
+  }
 }
 
-class CanonicalUnifiedCondition {
+class CanonicalUnifiedConditions {
   // Common properties
   final String? operator;
   final String? conditionType;
@@ -83,7 +101,7 @@ class CanonicalUnifiedCondition {
   // Common for both
   final Map<String, dynamic>? returnValueTest;
 
-  CanonicalUnifiedCondition({
+  CanonicalUnifiedConditions({
     this.operator,
     this.conditionType,
     // EVM Basic
@@ -100,7 +118,7 @@ class CanonicalUnifiedCondition {
     this.returnValueTest,
   });
 
-  CanonicalUnifiedCondition.fromJson(Map<String, dynamic> json)
+  CanonicalUnifiedConditions.fromJson(Map<String, dynamic> json)
       : operator = json['operator'],
         conditionType = json['conditionType'],
         // EVM Basic
@@ -115,4 +133,29 @@ class CanonicalUnifiedCondition {
         functionAbi = json['functionAbi'],
         // Common for both
         returnValueTest = json['returnValueTest'];
+
+  Map<String, dynamic> toJson(
+      CanonicalUnifiedConditions canonicalUnifiedConditions) {
+    return {
+      'operator': canonicalUnifiedConditions.operator,
+      'conditionType': canonicalUnifiedConditions.conditionType,
+      // EVM Basic
+      'contractAddress': canonicalUnifiedConditions.contractAddress,
+      'chain': canonicalUnifiedConditions.chain,
+      'standardContractType': canonicalUnifiedConditions.standardContractType,
+      'method': canonicalUnifiedConditions.method,
+      'parameters': canonicalUnifiedConditions.parameters,
+      // EVM Contract
+      'functionName': canonicalUnifiedConditions.functionName,
+      'functionParams': canonicalUnifiedConditions.functionParams,
+      'functionAbi': canonicalUnifiedConditions.functionAbi,
+      // Common for both
+      'returnValueTest': canonicalUnifiedConditions.returnValueTest,
+    };
+  }
+
+  static List<Map<String, dynamic>> toJsonList(
+      List<CanonicalUnifiedConditions> list) {
+    return list.map((item) => item.toJson(item)).toList();
+  }
 }
