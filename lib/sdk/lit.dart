@@ -26,7 +26,7 @@ class LitNodeClient {
     if (bootstrapUrls.isEmpty) {
       bootstrapUrls = litConfig["lit_networks"]["cayenne"];
 
-      if (bootstrapUrls.length == 0) {
+      if (bootstrapUrls.isEmpty) {
         throw Exception("No bootstrap URLs found");
       }
     }

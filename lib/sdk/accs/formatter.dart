@@ -1,5 +1,4 @@
 import 'package:flutter_rust_bridge_template/sdk/accs/formatter.types.dart';
-import 'dart:developer';
 
 List<Map<String, dynamic>> canonicalAbiParams(
     List<Map<String, dynamic>> params) {
@@ -22,7 +21,6 @@ List<Map<String, dynamic>> canonicalAbiParams(
 /// @param cond A dynamic type that holds the condition to be formatted.
 /// @returns A `CanonicalCondition?` object containing the canonical form of the condition.
 canonicalEVMContractConditionFormatter(dynamic cond) {
-  
   if (cond is List && cond.isNotEmpty) {
     return cond.map(canonicalEVMContractConditionFormatter).toList();
   }
@@ -67,6 +65,37 @@ canonicalEVMContractConditionFormatter(dynamic cond) {
       return result;
     }
   }
-
   return null;
+}
+
+dynamic canonicalAccessControlConditionFormatter(dynamic cond) {
+  // If it's a List
+  if (cond is List) {
+    return cond
+        .map((c) => canonicalAccessControlConditionFormatter(c))
+        .toList();
+  }
+
+  // If there's an 'operator' key in the Map
+  if (cond is Map && cond.containsKey('operator')) {
+    return {"operator": cond['operator']};
+  }
+
+  // If there's a 'returnValueTest' key in the Map
+  if (cond is Map && cond.containsKey('returnValueTest')) {
+    return {
+      'contractAddress': cond['contractAddress'],
+      'chain': cond['chain'],
+      'standardContractType': cond['standardContractType'],
+      'method': cond['method'],
+      'parameters': cond['parameters'],
+      'returnValueTest': {
+        'comparator': cond['returnValueTest']['comparator'],
+        'value': cond['returnValueTest']['value'],
+      },
+    };
+  }
+
+  // Throw an error for invalid condition
+  throw Exception('You passed an invalid access control condition: $cond');
 }
