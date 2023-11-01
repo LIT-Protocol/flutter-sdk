@@ -102,4 +102,18 @@ void main() {
         await hashUnifiedAccessControlConditions(mockUnifiedConditions);
     expect(result[0], 169);
   });
+
+  test('hashResourceId should return expected hash', () async {
+    var mockResourceId = {
+      'baseUrl': 'http://example.com',
+      'path': '/some/path',
+      'orgId': 'org123',
+      'role': 'admin',
+      'extraData': {'key': 'value'}
+    };
+
+    var result = await hashResourceId(mockResourceId);
+
+    expect(result[0], 179);
+  });
 }

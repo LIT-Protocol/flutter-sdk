@@ -68,3 +68,19 @@ Future<List<int>> hashUnifiedAccessControlConditions(
   Digest digest = sha256.convert(data);
   return digest.bytes;
 }
+
+Future<List<int>> hashResourceId(Map<String, dynamic> resourceId) async {
+  var resId = {
+    'baseUrl': resourceId['baseUrl'],
+    'path': resourceId['path'],
+    'orgId': resourceId['orgId'],
+    'role': resourceId['role'],
+    'extraData': resourceId['extraData']
+  };
+
+  var toHash = jsonEncode(resId); // Turn it into a JSON string
+  var data = utf8.encode(toHash); // Convert JSON string to bytes
+  Digest digest = sha256.convert(data); // Hash using SHA-256
+
+  return digest.bytes; // Return the hash as a list of integers
+}
