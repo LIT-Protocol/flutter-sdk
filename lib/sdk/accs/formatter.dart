@@ -40,7 +40,8 @@ canonicalEVMContractConditionFormatter(dynamic cond) {
 
       final functionName = functionAbi['name'] ?? '';
       if (functionName.isEmpty) {
-        throw Exception('Function name cannot be empty');
+        throw Exception(
+            'Function name cannot be empty in functionAbi["name"], your functionAbi: $functionAbi');
       }
 
       var result = {
@@ -49,8 +50,8 @@ canonicalEVMContractConditionFormatter(dynamic cond) {
         "functionParams": cond['functionParams'],
         "functionAbi": {
           'name': functionName,
-          'inputs': canonicalAbiParams(functionAbi['inputs']),
-          'outputs': canonicalAbiParams(functionAbi['outputs']),
+          'inputs': canonicalAbiParams(functionAbi['inputs'] ?? []),
+          'outputs': canonicalAbiParams(functionAbi['outputs'] ?? []),
           'constant': functionAbi['constant'] ?? false,
           'stateMutability': functionAbi['stateMutability'] ?? '',
         },
@@ -70,10 +71,8 @@ canonicalEVMContractConditionFormatter(dynamic cond) {
 
 dynamic canonicalAccessControlConditionFormatter(dynamic cond) {
   // If it's a List
-  if (cond is List) {
-    return cond
-        .map((c) => canonicalAccessControlConditionFormatter(c))
-        .toList();
+  if (cond is List && cond.isNotEmpty) {
+    return cond.map(canonicalAccessControlConditionFormatter).toList();
   }
 
   // If there's an 'operator' key in the Map
@@ -98,4 +97,43 @@ dynamic canonicalAccessControlConditionFormatter(dynamic cond) {
 
   // Throw an error for invalid condition
   throw Exception('You passed an invalid access control condition: $cond');
+}
+
+dynamic canonicalUnifiedAccessControlConditionFormatter(dynamic cond) {
+  // If it's a list, map each element
+  if (cond is List && cond.isNotEmpty) {
+    return cond.map(canonicalUnifiedAccessControlConditionFormatter).toList();
+  }
+
+  // If there's an 'operator' key in the map
+  if (cond is Map && cond.containsKey('operator')) {
+    return {"operator": cond['operator']};
+  }
+
+  // Otherwise, check for 'returnValueTest'
+  if (cond is Map && cond.containsKey('returnValueTest')) {
+    final conditionType = cond['conditionType'];
+
+    switch (conditionType) {
+      case 'evmBasic':
+        return canonicalAccessControlConditionFormatter(cond);
+      case 'evmContract':
+        if ((cond['functionName'] == null || cond['functionName'] == '')) {
+          throw Exception('x Function name cannot be emsspty');
+        }
+
+        return canonicalEVMContractConditionFormatter(cond);
+      // TODO: feature/0.0.2
+      // case 'solRpc':
+      //   return canonicalSolRpcConditionFormatter(cond, true);
+      // case 'cosmos':
+      //   return canonicalCosmosConditionFormatter(cond);
+      default:
+        throw Exception(
+            'You passed an invalid access control condition that is missing or has a wrong "conditionType": ${cond.toString()}');
+    }
+  }
+
+  throw Exception(
+      'You passed an invalid access control condition: ${cond.toString()}');
 }

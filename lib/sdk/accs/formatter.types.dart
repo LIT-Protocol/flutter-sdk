@@ -49,3 +49,54 @@ class CanonicalAccessControlCondition {
         parameters = json['parameters'],
         returnValueTest = json['returnValueTest'];
 }
+
+class CanonicalUnifiedCondition {
+  // Common properties
+  final String? operator;
+  final String? conditionType;
+  // EVM Basic
+  final String? contractAddress;
+  final String? chain;
+  final String? standardContractType;
+  final String? method;
+  final dynamic parameters;
+  // EVM Contract
+  final String? functionName;
+  final dynamic functionParams;
+  final Map<String, dynamic>? functionAbi;
+  // Common for both
+  final Map<String, dynamic>? returnValueTest;
+
+  CanonicalUnifiedCondition({
+    this.operator,
+    this.conditionType,
+    // EVM Basic
+    this.contractAddress,
+    this.chain,
+    this.standardContractType,
+    this.method,
+    this.parameters,
+    // EVM Contract
+    this.functionName,
+    this.functionParams,
+    this.functionAbi,
+    // Common for both
+    this.returnValueTest,
+  });
+
+  CanonicalUnifiedCondition.fromJson(Map<String, dynamic> json)
+      : operator = json['operator'],
+        conditionType = json['conditionType'],
+        // EVM Basic
+        contractAddress = json['contractAddress'],
+        chain = json['chain'],
+        standardContractType = json['standardContractType'],
+        method = json['method'],
+        parameters = json['parameters'],
+        // EVM Contract
+        functionName = json['functionName'],
+        functionParams = json['functionParams'],
+        functionAbi = json['functionAbi'],
+        // Common for both
+        returnValueTest = json['returnValueTest'];
+}
