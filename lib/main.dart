@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'package:convert/convert.dart';
+import 'package:flutter_rust_bridge_template/sdk/accs/formatter.types.dart';
 import 'package:flutter_rust_bridge_template/sdk/helper.dart';
 import 'package:flutter_rust_bridge_template/sdk/lit.dart';
+import 'package:flutter_rust_bridge_template/sdk/lit.types.dart';
 import './native.dart';
 
 void main() {
@@ -119,11 +121,27 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
               LitButton(
-                buttonText: "Connect to Lit Nodes",
+                buttonText: "encrypt",
                 callback: () async {
                   LitNodeClient litNodeClient = new LitNodeClient();
-                  bool connected = await litNodeClient.connect();
-                  return "connected: $connected";
+                  await litNodeClient.connect();
+                  var data = await litNodeClient.encrypt(EncryptRequest(
+                    dataToEncrypt: "testing",
+                    chain: "ethereum",
+                    accessControlConditions: [
+                      CanonicalAccessControlCondition.fromJson({
+                        'contractAddress':
+                            '0x3110c39b428221012934A7F617913b095BC1078C',
+                        'standardContractType': 'ERC1155',
+                        'chain': 'ethereum',
+                        'method': 'balanceOf',
+                        'parameters': [':userAddress', '9541'],
+                        'returnValueTest': {'comparator': '>', 'value': '0'}
+                      }),
+                    ],
+                  ));
+                  print("✅ SUCCESS, shares combined ${data.ciphertext}");
+                  return "ciphertext: ${data.ciphertext} \n dataToEncryptHash: ${data.dataToEncryptHash}";
                 },
               ),
               Container(margin: const EdgeInsets.only(top: 24)),
