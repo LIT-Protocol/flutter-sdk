@@ -1,8 +1,18 @@
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_rust_bridge_template/native.dart';
+import 'package:flutter_rust_bridge_template/sdk/accs/uint8arrays.dart';
 import 'package:flutter_rust_bridge_template/sdk/handshakes.dart';
 import 'package:flutter_rust_bridge_template/sdk/helper.dart';
 import 'package:flutter_rust_bridge_template/sdk/lit.types.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'dart:typed_data';
+import 'package:convert/convert.dart';
+import 'package:flutter_rust_bridge_template/sdk/helper.dart';
+import 'package:flutter_rust_bridge_template/sdk/lit.dart';
 
 class LitNodeClient {
   List<dynamic> bootstrapUrls = [];
@@ -94,7 +104,8 @@ class LitNodeClient {
 
   ///
   /// Encrypt data using the Lit network public key
-  Future<String> encrypt(EncryptRequest params) async {
+  ///
+  Future<EncryptResponse> encrypt(EncryptRequest params) async {
     if (!ready) {
       await connect();
 
@@ -107,11 +118,30 @@ class LitNodeClient {
       throw Exception("Subnet public key is null");
     }
 
-    // -- convert data to Uint8List
-    // var dataToEncryptBuffer = toUint8List(dataToEncrypt);
+    // -- 1. hash accs
+    final hashedConditions =
+        await getHashedAccessControlConditions(EncryptRequest.toMap(params));
 
-    // -- handle
+    final hashedConditionsString = uint8ListToHex(hashedConditions);
 
-    return 'Not implemented yet';
+    final hashedConditionsHex =
+        uint8arrayFromString(hashedConditionsString, 'base16');
+
+    // -- 2. hash data to encrypt
+    var privateDataBuffer = toUint8List(params.dataToEncrypt);
+    final dataToEncryptHash = uint8arrayToString(privateDataBuffer, 'base16');
+
+    // -- 3. assemble identity param TODO: 0.0.2
+    final identityParam =
+        'lit-accesscontrolcondition://$hashedConditionsHex/$dataToEncryptHash';
+
+    // -- 4. encrypt
+    final ciphertext = await bls.encrypt(
+        publicKey: subnetPubKey ?? '',
+        message: hex.encode(privateDataBuffer),
+        identity: hex.encode(uint8arrayFromString(identityParam, 'utf8')));
+
+    return EncryptResponse(
+        ciphertext: ciphertext, dataToEncryptHash: dataToEncryptHash);
   }
 }

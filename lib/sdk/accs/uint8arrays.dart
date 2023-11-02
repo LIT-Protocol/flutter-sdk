@@ -33,7 +33,7 @@ String base64ToBase64UrlPad(String str) {
 }
 
 // 7. uint8arrayFromString
-Uint8List uint8arrayFromString(String str, [String encoding = 'utf8']) {
+Uint8List uint8arrayFromString(dynamic str, [String encoding = 'utf8']) {
   switch (encoding) {
     case 'utf8':
       return utf8Encode(str);
@@ -65,4 +65,8 @@ String uint8arrayToString(Uint8List bytes, [String encoding = 'utf8']) {
     default:
       throw UnsupportedError('Unsupported encoding $encoding');
   }
+}
+
+String uint8ListToHex(Uint8List data) {
+  return data.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('');
 }
