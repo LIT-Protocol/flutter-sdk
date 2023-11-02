@@ -116,4 +116,19 @@ void main() {
 
     expect(result[0], 179);
   });
+
+  test('hashResourceIdForSigning should return expected hash', () async {
+    var mockResourceId = {
+      'baseUrl': 'http://example.com',
+      'path': '/some/path',
+      'orgId': 'org123',
+      'role': 'admin',
+      'extraData': {'key': 'value'}
+    };
+
+    var result = await hashResourceIdForSigning(mockResourceId);
+
+    expect(result,
+        'b3ed94a5980a5d0ea7b7664439e8487e8128ad8564ff27156121ceec8f2039ca');
+  });
 }

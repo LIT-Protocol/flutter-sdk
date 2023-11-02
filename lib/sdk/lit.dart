@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_rust_bridge_template/sdk/handshakes.dart';
 import 'package:flutter_rust_bridge_template/sdk/helper.dart';
+import 'package:flutter_rust_bridge_template/sdk/lit.types.dart';
 
 class LitNodeClient {
   List<dynamic> bootstrapUrls = [];
@@ -69,7 +70,7 @@ class LitNodeClient {
     }
 
     // -- validate
-    if (serverKeys.length <= litConfig['minNodeCount']) {
+    if (serverKeys.length <= litConfig['min_node_count']) {
       throw Exception("Not enough nodes connected");
     }
 
@@ -89,5 +90,28 @@ class LitNodeClient {
         '🔥 lit is ready. "litNodeClient" variable is ready to use globally.');
 
     return true;
+  }
+
+  ///
+  /// Encrypt data using the Lit network public key
+  Future<String> encrypt(EncryptRequest params) async {
+    if (!ready) {
+      await connect();
+
+      if (!ready) {
+        throw Exception("Lit node client is not ready yet");
+      }
+    }
+
+    if (subnetPubKey == null) {
+      throw Exception("Subnet public key is null");
+    }
+
+    // -- convert data to Uint8List
+    // var dataToEncryptBuffer = toUint8List(dataToEncrypt);
+
+    // -- handle
+
+    return 'Not implemented yet';
   }
 }
